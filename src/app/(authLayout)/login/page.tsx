@@ -1,20 +1,33 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import type React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import GoogleLoginButton from '@/components/GoogleLoginButton';
 import { AuthService } from '@/services/auth';
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [needsVerification, setNeedsVerification] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      window.location.href = '/dashboard';
+    }
+  }, []);
+
+  function saveAuthSession(accessToken: string, user: unknown) {
+    // 1. Set cookie with path=/ so middleware & SSR see it
+    document.cookie = `accessToken=${accessToken}; path=/; max-age=2592000; SameSite=Lax`;
+    // 2. Set localStorage for client usage
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('user', JSON.stringify(user));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -27,12 +40,11 @@ export default function LoginPage() {
       const res = await AuthService.login({ email, password });
 
       if (res.success && res.data?.accessToken) {
-        localStorage.setItem('accessToken', res.data.accessToken);
-        localStorage.setItem('user', JSON.stringify(res.data.user));
+        saveAuthSession(res.data.accessToken, res.data.user);
         setSuccess('Login successful! Redirecting to dashboard...');
         setTimeout(() => {
-          router.push('/dashboard');
-        }, 1000);
+          window.location.href = '/dashboard';
+        }, 500);
       } else {
         const errorMsg = res.message || 'Login failed. Please check your credentials.';
         setError(errorMsg);
@@ -56,12 +68,11 @@ export default function LoginPage() {
       const res = await AuthService.googleLogin({ idToken });
 
       if (res.success && res.data?.accessToken) {
-        localStorage.setItem('accessToken', res.data.accessToken);
-        localStorage.setItem('user', JSON.stringify(res.data.user));
+        saveAuthSession(res.data.accessToken, res.data.user);
         setSuccess('Google login successful! Redirecting to dashboard...');
         setTimeout(() => {
-          router.push('/dashboard');
-        }, 1000);
+          window.location.href = '/dashboard';
+        }, 500);
       } else {
         setError(res.message || 'Google login failed.');
       }

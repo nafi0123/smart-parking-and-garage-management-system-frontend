@@ -79,4 +79,20 @@ export const AuthService = {
     });
     return res.json();
   },
+
+  // 5. Logout User
+  logout: async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/logout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      return res.json();
+    } catch (_err) {
+      return { success: true, message: 'Logged out' };
+    }
+  },
 };

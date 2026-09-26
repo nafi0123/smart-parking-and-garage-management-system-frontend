@@ -24,7 +24,8 @@
     "rules": {
       "preset": "recommended",
       "suspicious": {
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noDocumentCookie": "off"
       }
     }
   },

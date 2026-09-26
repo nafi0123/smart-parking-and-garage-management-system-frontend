@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import GoogleLoginButton from '@/components/GoogleLoginButton';
 import { AuthService } from '@/services/auth';
 
@@ -17,6 +17,19 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      window.location.href = '/dashboard';
+    }
+  }, []);
+
+  function saveAuthSession(accessToken: string, user: unknown) {
+    document.cookie = `accessToken=${accessToken}; path=/; max-age=2592000; SameSite=Lax`;
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('user', JSON.stringify(user));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -57,12 +70,11 @@ export default function RegisterPage() {
       const res = await AuthService.googleLogin({ idToken });
 
       if (res.success && res.data?.accessToken) {
-        localStorage.setItem('accessToken', res.data.accessToken);
-        localStorage.setItem('user', JSON.stringify(res.data.user));
-        setSuccess('Google sign-up/login successful! Redirecting...');
+        saveAuthSession(res.data.accessToken, res.data.user);
+        setSuccess('Google sign-up/login successful! Redirecting to dashboard...');
         setTimeout(() => {
-          router.push('/dashboard');
-        }, 1000);
+          window.location.href = '/dashboard';
+        }, 500);
       } else {
         setError(res.message || 'Google authentication failed.');
       }
