@@ -1,5 +1,7 @@
 'use client';
 
+import DataTable from '@/components/DataTable';
+
 const zoneA = [
   { id: 'A1', status: 'free' },
   { id: 'A2', status: 'used' },
@@ -103,6 +105,9 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Data Table */}
+      <DataTable title="Recent Registered Users" subtitle="Live records from Central Parking Network" badgeLabel="Total" />
     </>
   );
 }
