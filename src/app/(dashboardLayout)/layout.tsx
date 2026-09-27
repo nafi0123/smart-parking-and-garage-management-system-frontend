@@ -111,7 +111,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Link href="/dashboard" className={pathname === '/dashboard' ? 'active' : ''}>
             <span>▤</span> Overview
           </Link>
-          <Link href="#">
+          <Link
+            href="/dashboard/garages"
+            className={pathname.startsWith('/dashboard/garages') ? 'active' : ''}
+          >
             <span>🅿</span> Parking Zones
           </Link>
           <Link href="#">
@@ -172,11 +175,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="bg-[var(--card)] border border-[var(--line)] shadow-sm rounded-lg p-3.5 sm:px-5 mb-5 flex items-center justify-between gap-4 flex-wrap">
           <div>
             <h1 className="text-lg sm:text-xl font-bold text-[var(--ink)] tracking-tight">
-              {pathname === '/dashboard/users' ? 'User Management' : 'Overview'}
+              {pathname === '/dashboard/users'
+                ? 'User Management'
+                : pathname.startsWith('/dashboard/garages')
+                ? 'Garage & Facility Management'
+                : 'Overview'}
             </h1>
             <p className="text-xs text-[var(--sub)] mt-0.5">
               {pathname === '/dashboard/users'
                 ? 'Central Parking Network — Registered Users & Access Control'
+                : pathname.startsWith('/dashboard/garages')
+                ? 'Central Parking Network — Registered Facilities, Slots & Rates'
                 : 'Central Plaza Parking — Live Status'}
             </p>
           </div>
