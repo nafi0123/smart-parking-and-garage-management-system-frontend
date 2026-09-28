@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import GarageDetailsModal from '@/components/GarageDetailsModal';
 import GarageFormModal from '@/components/GarageFormModal';
 import TableSkeleton from '@/components/TableSkeleton';
-import { type IGarage, GarageService } from '@/services/garage';
+import { GarageService, type IGarage } from '@/services/garage';
 import Alert from '@/utils/alert';
 
 // Custom Borderless SelectDropdown
@@ -329,9 +329,12 @@ export default function GarageTable({
               <button
                 type="button"
                 onClick={handleOpenCreate}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-gradient-to-r from-[#0f2a6b] to-[#1e40af] hover:from-[#0b1f50] hover:to-[#1e3a8a] text-white text-xs font-bold shadow-md transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-gradient-to-r from-[#0f2a6b] to-[#1e40af] hover:from-[#0b1f50] hover:to-[#1e3a8a] text-white text-xs font-bold shadow-md hover:shadow-lg transition-all active:scale-95 cursor-pointer"
               >
-                <span>+</span> Add Garage
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                </svg>
+                <span>Add Garage</span>
               </button>
             </div>
           </div>
@@ -361,10 +364,12 @@ export default function GarageTable({
                 <button
                   type="button"
                   onClick={() => setSearchTerm('')}
-                  className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-[var(--sub)] hover:text-[var(--ink)] text-xs"
+                  className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-[var(--sub)] hover:text-[var(--ink)] text-xs transition-colors cursor-pointer"
                   title="Clear search"
                 >
-                  ✕
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
               )}
             </div>
@@ -430,7 +435,11 @@ export default function GarageTable({
                 <tr>
                   <td colSpan={6} className="py-12 px-4 text-center">
                     <div className="flex flex-col items-center justify-center text-[var(--sub)]">
-                      <span className="text-4xl mb-2 opacity-50">🅿</span>
+                      <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3">
+                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                      </div>
                       <p className="text-sm font-semibold text-[var(--ink)]">No Garages Found</p>
                       <p className="text-xs mt-0.5">
                         {searchTerm || availabilityFilter !== 'ALL'
@@ -440,9 +449,12 @@ export default function GarageTable({
                       <button
                         type="button"
                         onClick={handleOpenCreate}
-                        className="mt-3 px-3.5 py-1.5 rounded-md bg-[var(--navy-2)] text-white text-xs font-bold hover:bg-[var(--navy)]"
+                        className="mt-3.5 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-[var(--navy-2)] text-white text-xs font-bold hover:bg-[var(--navy)] transition-colors shadow-xs cursor-pointer"
                       >
-                        + Add First Garage
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                        </svg>
+                        <span>Add First Garage</span>
                       </button>
                     </div>
                   </td>
@@ -464,19 +476,25 @@ export default function GarageTable({
                             {thumb ? (
                               <img src={thumb} alt={garage.name} className="w-full h-full object-cover" />
                             ) : (
-                              <span className="text-[var(--navy-2)]">🅿</span>
+                              <svg className="w-5 h-5 text-blue-500/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                              </svg>
                             )}
                           </div>
                           <div className="truncate max-w-[260px]">
                             <button
                               type="button"
                               onClick={() => setSelectedGarage(garage)}
-                              className="font-bold text-[var(--ink)] hover:text-[var(--navy-2)] dark:hover:text-blue-400 text-xs truncate text-left cursor-pointer"
+                              className="font-bold text-[var(--ink)] hover:text-[var(--navy-2)] dark:hover:text-blue-400 text-xs truncate text-left cursor-pointer transition-colors"
                             >
                               {garage.name}
                             </button>
-                            <div className="text-[11px] text-[var(--sub)] truncate flex items-center gap-1">
-                              <span>📍</span> {garage.location || garage.address}
+                            <div className="text-[11px] text-[var(--sub)] truncate flex items-center gap-1 mt-0.5">
+                              <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                              </svg>
+                              <span className="truncate">{garage.location || garage.address}</span>
                             </div>
                           </div>
                         </div>
@@ -532,12 +550,14 @@ export default function GarageTable({
 
                       {/* Rating */}
                       <td className="py-3 px-4">
-                        <div className="flex items-center gap-1 text-xs">
-                          <span className="text-amber-500 font-bold">★</span>
+                        <div className="flex items-center gap-1.5 text-xs">
+                          <svg className="w-3.5 h-3.5 text-amber-500 fill-amber-500 shrink-0" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
                           <span className="font-bold text-[var(--ink)]">
                             {garage.averageRating?.toFixed(1) || '5.0'}
                           </span>
-                          <span className="text-[10px] text-[var(--sub)]">
+                          <span className="text-[10px] text-[var(--sub)] font-mono">
                             ({garage.totalReviews || 0})
                           </span>
                         </div>
@@ -560,20 +580,27 @@ export default function GarageTable({
                           <button
                             type="button"
                             onClick={() => setSelectedGarage(garage)}
-                            className="p-1.5 rounded hover:bg-[var(--bg)] text-[var(--sub)] hover:text-[var(--ink)] transition-colors cursor-pointer"
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 border border-sky-500/20 transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer group"
                             title="View Facility Details"
+                            aria-label={`View details for ${garage.name}`}
                           >
-                            👁
+                            <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
                           </button>
 
                           {/* Edit Button */}
                           <button
                             type="button"
                             onClick={() => handleOpenEdit(garage)}
-                            className="p-1.5 rounded hover:bg-[var(--bg)] text-blue-600 dark:text-blue-400 transition-colors cursor-pointer"
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer group"
                             title="Edit Garage"
+                            aria-label={`Edit ${garage.name}`}
                           >
-                            ✎
+                            <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
                           </button>
 
                           {/* Delete Button */}
@@ -581,10 +608,13 @@ export default function GarageTable({
                             type="button"
                             onClick={() => handleDelete(garage)}
                             disabled={deleteMutation.isPending}
-                            className="p-1.5 rounded hover:bg-red-500/15 text-red-500 transition-colors cursor-pointer disabled:opacity-40"
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed group"
                             title="Delete Garage"
+                            aria-label={`Delete ${garage.name}`}
                           >
-                            🗑
+                            <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
                           </button>
                         </div>
                       </td>
@@ -623,12 +653,15 @@ export default function GarageTable({
               type="button"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1 || loading}
-              className="px-2.5 py-1 rounded-md border-0 bg-[var(--card)] text-[var(--ink)] font-semibold text-xs disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg)] transition-colors cursor-pointer flex items-center gap-1 shadow-2xs"
+              className="px-2.5 py-1.5 rounded-md border-0 bg-[var(--card)] text-[var(--ink)] font-semibold text-xs disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg)] transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
             >
-              <span>←</span> Prev
+              <svg className="w-3.5 h-3.5 text-[var(--sub)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              <span>Prev</span>
             </button>
 
-            <div className="px-2.5 py-1 rounded-md border-0 bg-[var(--card)] text-xs font-bold text-[var(--ink)] shadow-2xs">
+            <div className="px-3 py-1.5 rounded-md border-0 bg-[var(--card)] text-xs font-bold text-[var(--ink)] shadow-2xs">
               Page {meta.page} of {Math.max(1, meta.totalPage)}
             </div>
 
@@ -636,9 +669,12 @@ export default function GarageTable({
               type="button"
               onClick={() => setPage((p) => Math.min(meta.totalPage, p + 1))}
               disabled={page >= meta.totalPage || loading}
-              className="px-2.5 py-1 rounded-md border-0 bg-[var(--card)] text-[var(--ink)] font-semibold text-xs disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg)] transition-colors cursor-pointer flex items-center gap-1 shadow-2xs"
+              className="px-2.5 py-1.5 rounded-md border-0 bg-[var(--card)] text-[var(--ink)] font-semibold text-xs disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg)] transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
             >
-              Next <span>→</span>
+              <span>Next</span>
+              <svg className="w-3.5 h-3.5 text-[var(--sub)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
             </button>
           </div>
         </div>
@@ -664,3 +700,4 @@ export default function GarageTable({
     </>
   );
 }
+
