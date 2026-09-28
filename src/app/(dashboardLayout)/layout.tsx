@@ -6,6 +6,7 @@ import type React from 'react';
 import { useEffect, useState } from 'react';
 import { AuthService } from '@/services/auth';
 import Alert from '@/utils/alert';
+import { clearAuthSession, getAuthToken, getAuthUser } from '@/utils/cookie';
 
 interface IUser {
   id?: string;
@@ -24,24 +25,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [currentDate, setCurrentDate] = useState<string>('');
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
+    const token = getAuthToken();
     if (!token) {
-      window.location.href = '/login';
+      router.replace('/login');
       return;
     }
 
-    // Sync cookie in case of fresh load
-    document.cookie = `accessToken=${token}; path=/; max-age=2592000; SameSite=Lax`;
-
-    try {
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      }
-    } catch (_err) {
-      // ignore
+    const authUser = getAuthUser();
+    if (authUser) {
+      setUser(authUser);
     }
-  }, []);
+  }, [router]);
 
   // Real-time Clock with seconds
   useEffect(() => {
@@ -88,12 +82,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     } catch (_err) {
       console.error('Logout error:', _err);
     } finally {
-      // 2. Clear client cookies and storage
-      document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('user');
+      // 2. Clear client cookies
+      clearAuthSession();
       // 3. Redirect to login page
-      router.push('/login');
+      router.replace('/login');
     }
   }
 
@@ -111,26 +103,38 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Link href="/dashboard" className={pathname === '/dashboard' ? 'active' : ''}>
             <span>▤</span> Overview
           </Link>
-          <Link
-            href="/dashboard/garages"
-            className={pathname.startsWith('/dashboard/garages') ? 'active' : ''}
-          >
-            <span>🅿</span> Parking Zones
-          </Link>
-          <Link href="#">
-            <span>🚗</span> Active Vehicles
-          </Link>
-          <Link href="#">
-            <span>💳</span> Payments
-          </Link>
 
-          <div className="nav-grp">Settings</div>
-          <Link href="/dashboard/users" className={pathname === '/dashboard/users' ? 'active' : ''}>
-            <span>👤</span> Users
-          </Link>
-          <Link href="#">
-            <span>⚙</span> Configuration
-          </Link>
+          {/* Admin & Manager: Garage Facility Management */}
+          {(user?.role === 'ADMIN' || user?.role === 'MANAGER') && (
+            <Link
+              href="/dashboard/garages"
+              className={pathname.startsWith('/dashboard/garages') ? 'active' : ''}
+            >
+              <span>🅿</span> {user?.role === 'MANAGER' ? 'My Garages' : 'Parking Zones'}
+            </Link>
+          )}
+
+          {/* Customer / Driver Navigation */}
+          {user?.role === 'DRIVER' && (
+            <>
+              <Link href="#" className={pathname === '/dashboard/vehicles' ? 'active' : ''}>
+                <span>🚗</span> My Vehicles
+              </Link>
+              <Link href="#" className={pathname === '/dashboard/bookings' ? 'active' : ''}>
+                <span>🎫</span> My Bookings
+              </Link>
+            </>
+          )}
+
+          {/* Admin Only: System & User Management */}
+          {user?.role === 'ADMIN' && (
+            <Link
+              href="/dashboard/users"
+              className={pathname === '/dashboard/users' ? 'active' : ''}
+            >
+              <span>👤</span> Users
+            </Link>
+          )}
         </nav>
 
         {/* Sidebar Footer with Logout & Status */}

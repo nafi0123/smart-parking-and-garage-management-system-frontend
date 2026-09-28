@@ -1,4 +1,4 @@
-export const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_API || 'http://localhost:5000/api/v1';
+import apiClient from './apiClient';
 
 export interface IUser {
   id: string;
@@ -38,49 +38,22 @@ export interface IGetAllUsersResponse {
 
 export const UserService = {
   getAllUsers: async (params: IGetAllUsersParams = {}): Promise<IGetAllUsersResponse> => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
-    const query = new URLSearchParams();
-
+    const formattedParams: Record<string, any> = {};
     if (params.searchTerm && params.searchTerm.trim() !== '') {
-      query.append('searchTerm', params.searchTerm.trim());
+      formattedParams.searchTerm = params.searchTerm.trim();
     }
     if (params.role && params.role !== 'ALL') {
-      query.append('role', params.role);
+      formattedParams.role = params.role;
     }
-    if (params.page) {
-      query.append('page', params.page.toString());
-    }
-    if (params.limit) {
-      query.append('limit', params.limit.toString());
-    }
-    if (params.sortBy) {
-      query.append('sortBy', params.sortBy);
-    }
-    if (params.sortOrder) {
-      query.append('sortOrder', params.sortOrder);
-    }
+    if (params.page) formattedParams.page = params.page;
+    if (params.limit) formattedParams.limit = params.limit;
+    if (params.sortBy) formattedParams.sortBy = params.sortBy;
+    if (params.sortOrder) formattedParams.sortOrder = params.sortOrder;
 
-    const res = await fetch(`${API_BASE_URL}/users?${query.toString()}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      credentials: 'include',
-    });
-    return res.json();
+    return apiClient.get('/users', { params: formattedParams });
   },
 
-  blockUser: async (userId: string) => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
-    const res = await fetch(`${API_BASE_URL}/users/block/${userId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      credentials: 'include',
-    });
-    return res.json();
+  blockUser: async (userId: string): Promise<{ statusCode: number; success: boolean; message: string; data?: any }> => {
+    return apiClient.patch(`/users/block/${userId}`);
   },
 };

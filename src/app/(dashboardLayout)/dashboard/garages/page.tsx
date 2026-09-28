@@ -1,13 +1,47 @@
 'use client';
 
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import GarageTable from '@/components/GarageTable';
+import { AuthService } from '@/services/auth';
 import { GarageService } from '@/services/garage';
+import { clearAuthSession, getAuthUser } from '@/utils/cookie';
 
 export default function GaragesPage() {
+  const router = useRouter();
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [loadingUser, setLoadingUser] = useState(true);
+
+  useEffect(() => {
+    const u = getAuthUser();
+    if (!u) {
+      clearAuthSession();
+      router.replace('/login');
+      return;
+    }
+
+    if (u.role === 'DRIVER') {
+      // Driver is unauthorized on facility management route
+      clearAuthSession();
+      AuthService.logout().finally(() => {
+        router.replace('/login');
+      });
+      return;
+    }
+
+    setUserRole(u.role);
+    setLoadingUser(false);
+  }, [router]);
+
+  const isManager = userRole === 'MANAGER';
+
+  // Fetch stats: Managers see their own stats; Admins see system-wide stats
   const { data: garagesData } = useQuery({
-    queryKey: ['garages', 'stats'],
-    queryFn: () => GarageService.getAllGarages({ limit: 100 }),
+    queryKey: ['garages', 'stats', isManager ? 'my' : 'all'],
+    queryFn: () => (isManager ? GarageService.getMyGarages() : GarageService.getAllGarages({ limit: 100 })),
+    enabled: !loadingUser && userRole !== 'DRIVER',
   });
 
   const garages = garagesData?.data || [];
@@ -18,6 +52,14 @@ export default function GaragesPage() {
     garages.length > 0
       ? Math.round(garages.reduce((sum, g) => sum + (g.pricePerHour || 0), 0) / garages.length)
       : 0;
+
+  if (loadingUser || userRole === 'DRIVER') {
+    return (
+      <div className="p-8 text-center text-xs text-[var(--sub)] animate-pulse">
+        Checking access permissions...
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5">
@@ -32,7 +74,7 @@ export default function GaragesPage() {
           </div>
           <div>
             <div className="text-[11px] text-[var(--sub)] font-semibold uppercase tracking-wider">
-              Total Facilities
+              {isManager ? 'My Facilities' : 'Total Facilities'}
             </div>
             <div className="text-xl font-bold text-[var(--ink)] tracking-tight">{totalGarages}</div>
           </div>
@@ -94,4 +136,5 @@ export default function GaragesPage() {
     </div>
   );
 }
+
 

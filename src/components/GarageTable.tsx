@@ -9,6 +9,8 @@ import TableSkeleton from '@/components/TableSkeleton';
 import { GarageService, type IGarage } from '@/services/garage';
 import Alert from '@/utils/alert';
 
+import { getAuthUser } from '@/utils/cookie';
+
 // Custom Borderless SelectDropdown
 interface IOption<T> {
   value: T;
@@ -144,6 +146,7 @@ export default function GarageTable({
 }: IGarageTableProps) {
   const queryClient = useQueryClient();
 
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [availabilityFilter, setAvailabilityFilter] = useState('ALL');
@@ -157,6 +160,22 @@ export default function GarageTable({
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingGarage, setEditingGarage] = useState<IGarage | null>(null);
   const [selectedGarage, setSelectedGarage] = useState<IGarage | null>(null);
+
+  // Load user from Cookie and set default view scope
+  useEffect(() => {
+    const u = getAuthUser();
+    if (u) {
+      setCurrentUser(u);
+      if (u.role === 'MANAGER') {
+        setViewScope('MY');
+      }
+    }
+  }, []);
+
+  const isUserAdmin = currentUser?.role === 'ADMIN';
+  const isUserManager = currentUser?.role === 'MANAGER';
+  const canAddGarage = isUserAdmin || isUserManager;
+  const effectiveScope = isUserManager ? 'MY' : viewScope;
 
   // Debounce search input
   useEffect(() => {
@@ -175,9 +194,9 @@ export default function GarageTable({
     error: queryError,
     refetch,
   } = useQuery({
-    queryKey: ['garages', viewScope, debouncedSearch, availabilityFilter, page, limit, sortBy, sortOrder],
+    queryKey: ['garages', effectiveScope, debouncedSearch, availabilityFilter, page, limit, sortBy, sortOrder],
     queryFn: () => {
-      if (viewScope === 'MY') {
+      if (effectiveScope === 'MY') {
         return GarageService.getMyGarages();
       }
       return GarageService.getAllGarages({
@@ -246,6 +265,8 @@ export default function GarageTable({
       ? queryResult.message
       : null;
 
+  const displayTitle = isUserManager ? 'My Parking Facilities' : title;
+
   return (
     <>
       <div className="w-full bg-[var(--card)] border border-slate-200/90 dark:border-slate-800 rounded-lg shadow-sm overflow-hidden flex flex-col my-5">
@@ -255,49 +276,55 @@ export default function GarageTable({
             <div>
               <div className="flex items-center gap-2.5">
                 <h2 className="text-base sm:text-lg font-bold text-[var(--ink)] tracking-tight">
-                  {title}
+                  {displayTitle}
                 </h2>
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-blue-500/10 text-[var(--navy-2)] dark:text-blue-400 border border-blue-500/20">
                   <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                   {meta.total} Facilities
                 </span>
               </div>
-              <p className="text-xs text-[var(--sub)] mt-0.5">{subtitle}</p>
+              <p className="text-xs text-[var(--sub)] mt-0.5">
+                {isUserManager
+                  ? 'Manage your registered parking zones, slots, and hourly rates'
+                  : subtitle}
+              </p>
             </div>
 
             {/* Top Right Actions */}
             <div className="flex items-center gap-2">
-              {/* Scope Switcher: All vs My */}
-              <div className="flex bg-[var(--bg)] p-0.5 rounded-md text-xs font-semibold">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setViewScope('ALL');
-                    setPage(1);
-                  }}
-                  className={`px-3 py-1 rounded transition-colors cursor-pointer ${
-                    viewScope === 'ALL'
-                      ? 'bg-[var(--card)] text-[var(--ink)] shadow-2xs font-bold'
-                      : 'text-[var(--sub)] hover:text-[var(--ink)]'
-                  }`}
-                >
-                  All Garages
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setViewScope('MY');
-                    setPage(1);
-                  }}
-                  className={`px-3 py-1 rounded transition-colors cursor-pointer ${
-                    viewScope === 'MY'
-                      ? 'bg-[var(--card)] text-[var(--ink)] shadow-2xs font-bold'
-                      : 'text-[var(--sub)] hover:text-[var(--ink)]'
-                  }`}
-                >
-                  My Garages
-                </button>
-              </div>
+              {/* Scope Switcher: Admin Only */}
+              {isUserAdmin && (
+                <div className="flex bg-[var(--bg)] p-0.5 rounded-md text-xs font-semibold">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setViewScope('ALL');
+                      setPage(1);
+                    }}
+                    className={`px-3 py-1 rounded transition-colors cursor-pointer ${
+                      viewScope === 'ALL'
+                        ? 'bg-[var(--card)] text-[var(--ink)] shadow-2xs font-bold'
+                        : 'text-[var(--sub)] hover:text-[var(--ink)]'
+                    }`}
+                  >
+                    All Garages
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setViewScope('MY');
+                      setPage(1);
+                    }}
+                    className={`px-3 py-1 rounded transition-colors cursor-pointer ${
+                      viewScope === 'MY'
+                        ? 'bg-[var(--card)] text-[var(--ink)] shadow-2xs font-bold'
+                        : 'text-[var(--sub)] hover:text-[var(--ink)]'
+                    }`}
+                  >
+                    My Garages
+                  </button>
+                </div>
+              )}
 
               {/* Refresh Button */}
               <button
@@ -326,16 +353,18 @@ export default function GarageTable({
               </button>
 
               {/* Add Garage Primary Button */}
-              <button
-                type="button"
-                onClick={handleOpenCreate}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-gradient-to-r from-[#0f2a6b] to-[#1e40af] hover:from-[#0b1f50] hover:to-[#1e3a8a] text-white text-xs font-bold shadow-md hover:shadow-lg transition-all active:scale-95 cursor-pointer"
-              >
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
-                </svg>
-                <span>Add Garage</span>
-              </button>
+              {canAddGarage && (
+                <button
+                  type="button"
+                  onClick={handleOpenCreate}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-gradient-to-r from-[#0f2a6b] to-[#1e40af] hover:from-[#0b1f50] hover:to-[#1e3a8a] text-white text-xs font-bold shadow-md hover:shadow-lg transition-all active:scale-95 cursor-pointer"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                  </svg>
+                  <span>Add Garage</span>
+                </button>
+              )}
             </div>
           </div>
 
@@ -446,16 +475,18 @@ export default function GarageTable({
                           ? 'Try clearing your search or filter parameters.'
                           : 'No garage facilities currently registered.'}
                       </p>
-                      <button
-                        type="button"
-                        onClick={handleOpenCreate}
-                        className="mt-3.5 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-[var(--navy-2)] text-white text-xs font-bold hover:bg-[var(--navy)] transition-colors shadow-xs cursor-pointer"
-                      >
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
-                        </svg>
-                        <span>Add First Garage</span>
-                      </button>
+                      {canAddGarage && (
+                        <button
+                          type="button"
+                          onClick={handleOpenCreate}
+                          className="mt-3.5 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-[var(--navy-2)] text-white text-xs font-bold hover:bg-[var(--navy)] transition-colors shadow-xs cursor-pointer"
+                        >
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                          </svg>
+                          <span>Add First Garage</span>
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -463,6 +494,8 @@ export default function GarageTable({
                 garages.map((garage) => {
                   const isAvailable = garage.availableSlots > 0;
                   const thumb = garage.images && garage.images.length > 0 ? garage.images[0] : null;
+                  const isOwner = Boolean(currentUser?.id && garage.ownerId === currentUser.id);
+                  const canManageGarage = isUserAdmin || isOwner;
 
                   return (
                     <tr
@@ -590,32 +623,35 @@ export default function GarageTable({
                             </svg>
                           </button>
 
-                          {/* Edit Button */}
-                          <button
-                            type="button"
-                            onClick={() => handleOpenEdit(garage)}
-                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer group"
-                            title="Edit Garage"
-                            aria-label={`Edit ${garage.name}`}
-                          >
-                            <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                          </button>
+                          {/* Edit & Delete Buttons (Admin or Facility Owner only) */}
+                          {canManageGarage && (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => handleOpenEdit(garage)}
+                                className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer group"
+                                title="Edit Garage"
+                                aria-label={`Edit ${garage.name}`}
+                              >
+                                <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              </button>
 
-                          {/* Delete Button */}
-                          <button
-                            type="button"
-                            onClick={() => handleDelete(garage)}
-                            disabled={deleteMutation.isPending}
-                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed group"
-                            title="Delete Garage"
-                            aria-label={`Delete ${garage.name}`}
-                          >
-                            <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                          </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDelete(garage)}
+                                disabled={deleteMutation.isPending}
+                                className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed group"
+                                title="Delete Garage"
+                                aria-label={`Delete ${garage.name}`}
+                              >
+                                <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                              </button>
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -695,7 +731,12 @@ export default function GarageTable({
         isOpen={!!selectedGarage}
         onClose={() => setSelectedGarage(null)}
         garage={selectedGarage}
-        onEdit={(g) => handleOpenEdit(g)}
+        onEdit={
+          selectedGarage &&
+          (isUserAdmin || (currentUser?.id && selectedGarage.ownerId === currentUser.id))
+            ? (g) => handleOpenEdit(g)
+            : undefined
+        }
       />
     </>
   );

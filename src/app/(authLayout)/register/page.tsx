@@ -6,6 +6,7 @@ import type React from 'react';
 import { useEffect, useState } from 'react';
 import GoogleLoginButton from '@/components/GoogleLoginButton';
 import { AuthService } from '@/services/auth';
+import { getAuthToken, setAuthSession } from '@/utils/cookie';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -20,16 +21,14 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
+    const token = getAuthToken();
     if (token) {
-      window.location.href = '/dashboard';
+      router.replace('/dashboard');
     }
-  }, []);
+  }, [router]);
 
   function saveAuthSession(accessToken: string, user: unknown) {
-    document.cookie = `accessToken=${accessToken}; path=/; max-age=2592000; SameSite=Lax`;
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('user', JSON.stringify(user));
+    setAuthSession(accessToken, user);
   }
 
   async function handleSubmit(e: React.FormEvent) {

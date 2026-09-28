@@ -1,4 +1,4 @@
-export const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_API || 'http://localhost:5000/api/v1';
+import apiClient from './apiClient';
 
 export interface IRegisterPayload {
   name: string;
@@ -31,68 +31,35 @@ export interface IAuthResponse<T = unknown> {
 
 export const AuthService = {
   // 1. Create User / Register
-  createUser: async (payload: IRegisterPayload) => {
-    const res = await fetch(`${API_BASE_URL}/users/create-user`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-    return res.json();
+  createUser: async (payload: IRegisterPayload): Promise<IAuthResponse> => {
+    return apiClient.post('/users/create-user', payload);
   },
 
   // 2. Login User
-  login: async (payload: ILoginPayload) => {
-    const res = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify(payload),
-    });
-    return res.json();
+  login: async (payload: ILoginPayload): Promise<IAuthResponse<{ accessToken: string; user: any }>> => {
+    return apiClient.post('/auth/login', payload);
   },
 
   // 3. Google Login
-  googleLogin: async (payload: IGoogleLoginPayload) => {
-    const res = await fetch(`${API_BASE_URL}/auth/google-login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify(payload),
-    });
-    return res.json();
+  googleLogin: async (
+    payload: IGoogleLoginPayload,
+  ): Promise<IAuthResponse<{ accessToken: string; user: any }>> => {
+    return apiClient.post('/auth/google-login', payload);
   },
 
   // 4. Verify OTP
-  verifyOtp: async (payload: IVerifyOtpPayload) => {
-    const res = await fetch(`${API_BASE_URL}/auth/verify-otp`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-    return res.json();
+  verifyOtp: async (
+    payload: IVerifyOtpPayload,
+  ): Promise<IAuthResponse<{ accessToken: string; user: any }>> => {
+    return apiClient.post('/auth/verify-otp', payload);
   },
 
   // 5. Logout User
-  logout: async () => {
+  logout: async (): Promise<IAuthResponse> => {
     try {
-      const res = await fetch(`${API_BASE_URL}/auth/logout`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      });
-      return res.json();
+      return await apiClient.post('/auth/logout');
     } catch (_err) {
-      return { success: true, message: 'Logged out' };
+      return { statusCode: 200, success: true, message: 'Logged out' };
     }
   },
 };
