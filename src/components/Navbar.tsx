@@ -27,12 +27,10 @@ export default function Navbar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
-  // Search State
-  const [searchTerm, setSearchTerm] = useState(searchParams?.get('searchTerm') || '');
-  const [maxPrice, setMaxPrice] = useState<string>(searchParams?.get('maxPrice') || '');
-  const [onlyAvailable, setOnlyAvailable] = useState<boolean>(
-    searchParams?.get('onlyAvailable') === 'true',
-  );
+  // Search State - Empty by default on page load/refresh
+  const [searchTerm, setSearchTerm] = useState('');
+  const [maxPrice, setMaxPrice] = useState<string>('');
+  const [onlyAvailable, setOnlyAvailable] = useState<boolean>(false);
 
   // Live Search Dropdown State
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -42,6 +40,16 @@ export default function Navbar() {
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Clean search input and reset query on refresh/mount
+  useEffect(() => {
+    setSearchTerm('');
+    setMaxPrice('');
+    setOnlyAvailable(false);
+    if (typeof window !== 'undefined' && window.location.search) {
+      router.replace(window.location.pathname);
+    }
+  }, [router]);
 
   // Check login state
   useEffect(() => {
@@ -217,6 +225,9 @@ export default function Navbar() {
                     type="button"
                     onClick={() => {
                       setSearchTerm('');
+                      if (typeof window !== 'undefined' && window.location.search) {
+                        router.replace(pathname || '/');
+                      }
                       performSearch('', maxPrice, onlyAvailable);
                     }}
                     className="absolute right-14 sm:right-16 text-zinc-400 hover:text-zinc-600 p-1 text-sm cursor-pointer"
