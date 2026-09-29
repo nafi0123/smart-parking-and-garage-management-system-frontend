@@ -1,34 +1,12 @@
 import Link from 'next/link';
 import type React from 'react';
+import Navbar from '@/components/Navbar';
 
 export default function CommonLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col bg-[var(--bg)] text-[var(--ink)]">
-      {/* Navbar */}
-      <header className="border-b border-[var(--line)] bg-[var(--card)]/90 backdrop-blur sticky top-0 z-50 px-6 py-4">
-        <div className="mx-auto flex max-w-7xl items-center justify-between">
-          <Link href="/" className="brand-logo !p-0 !text-[var(--ink)]">
-            <span className="dot" /> ParkWise
-          </Link>
-          <nav className="flex items-center gap-6 text-sm font-medium">
-            <Link href="/" className="hover:text-[var(--blue)] transition-colors">
-              Home
-            </Link>
-            <Link href="/dashboard" className="hover:text-[var(--blue)] transition-colors">
-              Dashboard
-            </Link>
-            <Link href="/login" className="hover:text-[var(--blue)] transition-colors">
-              Login
-            </Link>
-            <Link
-              href="/register"
-              className="px-4 py-2 rounded-lg bg-[var(--navy-2)] text-white font-semibold hover:bg-[var(--navy)] transition-colors"
-            >
-              Get Started
-            </Link>
-          </nav>
-        </div>
-      </header>
+      {/* Dynamic Navbar matching reference design */}
+      <Navbar />
 
       {/* Main Content */}
       <main className="flex-1">{children}</main>

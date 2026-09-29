@@ -115,10 +115,7 @@ export default function GarageFormModal({
         continue;
       }
       if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-        Alert.error(
-          'File Too Large',
-          `${file.name} exceeds the ${MAX_FILE_SIZE_MB}MB size limit.`,
-        );
+        Alert.error('File Too Large', `${file.name} exceeds the ${MAX_FILE_SIZE_MB}MB size limit.`);
         continue;
       }
 
@@ -305,7 +302,12 @@ export default function GarageFormModal({
             aria-label="Close modal"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -329,7 +331,9 @@ export default function GarageFormModal({
             </div>
 
             <div>
-              <label className="block font-semibold text-[var(--ink)] mb-1">Area / Location Name</label>
+              <label className="block font-semibold text-[var(--ink)] mb-1">
+                Area / Location Name
+              </label>
               <input
                 type="text"
                 placeholder="e.g. Dhanmondi 27, Dhaka"
@@ -384,13 +388,17 @@ export default function GarageFormModal({
                 min={0}
                 max={formData.totalSlots}
                 value={formData.availableSlots}
-                onChange={(e) => setFormData({ ...formData, availableSlots: Number(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({ ...formData, availableSlots: Number(e.target.value) })
+                }
                 className="w-full px-3 py-2 rounded-md bg-[var(--bg)] border-0 text-[var(--ink)] outline-none focus:ring-2 focus:ring-[var(--navy-2)]/20 transition-all font-medium"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-[var(--ink)] mb-1">Price Per Hour (৳ / $)</label>
+              <label className="block font-semibold text-[var(--ink)] mb-1">
+                Price Per Hour (৳ / $)
+              </label>
               <input
                 type="number"
                 min={0}
@@ -406,9 +414,24 @@ export default function GarageFormModal({
           <div className="p-3 bg-[var(--bg)]/60 rounded-lg space-y-2">
             <div className="flex items-center justify-between">
               <span className="font-semibold text-[var(--ink)] text-xs flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                <svg
+                  className="w-3.5 h-3.5 text-blue-500 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
                 </svg>
                 <span>GPS Coordinates (for Nearby Radar Search)</span>
               </span>
@@ -418,8 +441,18 @@ export default function GarageFormModal({
                 disabled={isLocating}
                 className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[var(--card)] hover:bg-[var(--bg)] text-[11px] font-semibold text-[var(--navy-2)] dark:text-blue-400 transition-colors shadow-2xs cursor-pointer disabled:opacity-50"
               >
-                <svg className={`w-3.5 h-3.5 ${isLocating ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                <svg
+                  className={`w-3.5 h-3.5 ${isLocating ? 'animate-spin' : ''}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
                 </svg>
                 <span>{isLocating ? 'Locating...' : 'Use My GPS'}</span>
               </button>
@@ -541,7 +574,12 @@ export default function GarageFormModal({
                 />
                 <div className="w-10 h-10 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.8}
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                    />
                   </svg>
                 </div>
                 <div className="text-center">
@@ -616,7 +654,9 @@ export default function GarageFormModal({
 
           {/* Row 6: Description */}
           <div>
-            <label className="block font-semibold text-[var(--ink)] mb-1">Description & Amenities</label>
+            <label className="block font-semibold text-[var(--ink)] mb-1">
+              Description & Amenities
+            </label>
             <textarea
               rows={3}
               placeholder="Covered underground parking, 24/7 CCTV surveillance, EV charging points available..."
@@ -631,8 +671,18 @@ export default function GarageFormModal({
             <div className="text-[11px] text-[var(--sub)]">
               {selectedFiles.length > 0 && (
                 <span className="text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1">
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                    />
                   </svg>
                   {selectedFiles.length} new photo(s) ready to upload to cloud
                 </span>
@@ -672,5 +722,3 @@ export default function GarageFormModal({
     </div>
   );
 }
-
-

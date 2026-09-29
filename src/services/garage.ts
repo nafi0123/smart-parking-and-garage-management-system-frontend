@@ -103,7 +103,28 @@ export interface ISingleGarageResponse {
 export const GarageService = {
   // Get all garages (Public / Search with filters & pagination)
   getAllGarages: async (params: IGetAllGaragesParams = {}): Promise<IGaragesResponse> => {
-    return apiClient.get('/garages', { params });
+    const formattedParams: Record<string, any> = {};
+    if (params.searchTerm && params.searchTerm.trim() !== '') {
+      formattedParams.searchTerm = params.searchTerm.trim();
+    }
+    if (params.minPrice !== undefined && params.minPrice !== null && !isNaN(Number(params.minPrice))) {
+      formattedParams.minPrice = Number(params.minPrice);
+    }
+    if (params.maxPrice !== undefined && params.maxPrice !== null && !isNaN(Number(params.maxPrice))) {
+      formattedParams.maxPrice = Number(params.maxPrice);
+    }
+    if (params.onlyAvailable !== undefined && params.onlyAvailable !== null && params.onlyAvailable !== '') {
+      formattedParams.onlyAvailable = params.onlyAvailable;
+    }
+    if (params.minRating !== undefined && params.minRating !== null) {
+      formattedParams.minRating = Number(params.minRating);
+    }
+    if (params.page) formattedParams.page = Number(params.page);
+    if (params.limit) formattedParams.limit = Number(params.limit);
+    if (params.sortBy) formattedParams.sortBy = params.sortBy;
+    if (params.sortOrder) formattedParams.sortOrder = params.sortOrder;
+
+    return apiClient.get('/garages', { params: formattedParams });
   },
 
   // Get garages owned by currently logged-in user (Manager / Admin)
@@ -122,7 +143,9 @@ export const GarageService = {
   },
 
   // Create a garage (Manager / Admin)
-  createGarage: async (payload: ICreateGaragePayload | FormData): Promise<ISingleGarageResponse> => {
+  createGarage: async (
+    payload: ICreateGaragePayload | FormData,
+  ): Promise<ISingleGarageResponse> => {
     const isFormData = payload instanceof FormData;
     return apiClient.post('/garages', payload, {
       headers: isFormData ? { 'Content-Type': 'multipart/form-data' } : undefined,

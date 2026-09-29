@@ -36,7 +36,9 @@ export const AuthService = {
   },
 
   // 2. Login User
-  login: async (payload: ILoginPayload): Promise<IAuthResponse<{ accessToken: string; user: any }>> => {
+  login: async (
+    payload: ILoginPayload,
+  ): Promise<IAuthResponse<{ accessToken: string; user: any }>> => {
     return apiClient.post('/auth/login', payload);
   },
 

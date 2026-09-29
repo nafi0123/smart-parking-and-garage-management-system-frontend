@@ -106,8 +106,18 @@ function SelectDropdown<T extends string | number>({
               >
                 <span>{opt.label}</span>
                 {isSelected && (
-                  <svg className="w-3.5 h-3.5 ml-2 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  <svg
+                    className="w-3.5 h-3.5 ml-2 shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2.5}
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                 )}
               </button>
@@ -230,8 +240,8 @@ export default function DataTable({
     queryError instanceof Error
       ? queryError.message
       : queryResult && !queryResult.success
-      ? queryResult.message
-      : null;
+        ? queryResult.message
+        : null;
 
   return (
     <div className="w-full bg-[var(--card)] border border-slate-200/90 dark:border-slate-800 rounded-lg shadow-sm overflow-hidden flex flex-col my-5">
@@ -254,7 +264,10 @@ export default function DataTable({
 
           {/* Top Actions */}
           <div className="flex items-center gap-2">
-            {(searchTerm || roleFilter !== 'ALL' || sortBy !== 'createdAt' || sortOrder !== 'desc') && (
+            {(searchTerm ||
+              roleFilter !== 'ALL' ||
+              sortBy !== 'createdAt' ||
+              sortOrder !== 'desc') && (
               <button
                 type="button"
                 onClick={() => {
@@ -268,7 +281,12 @@ export default function DataTable({
                 title="Reset All Filters"
               >
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
                 <span>Reset</span>
               </button>
@@ -287,7 +305,12 @@ export default function DataTable({
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
               </svg>
               <span>{isFetching ? 'Refreshing...' : 'Refresh'}</span>
             </button>
@@ -300,7 +323,12 @@ export default function DataTable({
           <div className="relative flex-1">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[var(--sub)]">
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
             </div>
             <input
@@ -353,8 +381,18 @@ export default function DataTable({
         {/* Error Alert */}
         {errorMessage && (
           <div className="rounded-md bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 p-2.5 text-xs text-red-600 dark:text-red-400 flex items-start gap-2 animate-in fade-in">
-            <svg className="w-4 h-4 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              className="w-4 h-4 shrink-0 mt-0.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             <div className="flex-1">
               <p className="font-semibold">{errorMessage}</p>
@@ -388,8 +426,18 @@ export default function DataTable({
               <tr>
                 <td colSpan={7} className="py-10 px-4 text-center">
                   <div className="flex flex-col items-center justify-center text-[var(--sub)]">
-                    <svg className="w-9 h-9 mb-2 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    <svg
+                      className="w-9 h-9 mb-2 opacity-40"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                      />
                     </svg>
                     <p className="text-sm font-semibold text-[var(--ink)]">No Records Found</p>
                     <p className="text-xs mt-0.5">
@@ -419,10 +467,7 @@ export default function DataTable({
                 const isBlocked = !user.isActive;
 
                 return (
-                  <tr
-                    key={user.id}
-                    className="hover:bg-[var(--bg)]/50 transition-colors group"
-                  >
+                  <tr key={user.id} className="hover:bg-[var(--bg)]/50 transition-colors group">
                     {/* User Profile */}
                     <td className="py-2.5 px-4">
                       <div className="flex items-center gap-2.5">
@@ -433,12 +478,17 @@ export default function DataTable({
                           <div className="font-semibold text-[var(--ink)] text-xs flex items-center gap-1.5">
                             {user.name}
                             {user.role === 'ADMIN' && (
-                              <span className="text-[10px] text-amber-500" title="System Administrator">
+                              <span
+                                className="text-[10px] text-amber-500"
+                                title="System Administrator"
+                              >
                                 ★
                               </span>
                             )}
                           </div>
-                          <div className="text-[11px] text-[var(--sub)] font-mono">{user.email}</div>
+                          <div className="text-[11px] text-[var(--sub)] font-mono">
+                            {user.email}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -455,8 +505,8 @@ export default function DataTable({
                           user.role === 'ADMIN'
                             ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20'
                             : user.role === 'MANAGER'
-                            ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20'
-                            : 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20'
+                              ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20'
+                              : 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20'
                         }`}
                       >
                         {user.role}
@@ -499,7 +549,9 @@ export default function DataTable({
                     {/* Action Block/Unblock Button */}
                     <td className="py-2.5 px-4 text-right">
                       {user.role === 'ADMIN' ? (
-                        <span className="text-[10px] text-[var(--sub)] italic">Admin Protected</span>
+                        <span className="text-[10px] text-[var(--sub)] italic">
+                          Admin Protected
+                        </span>
                       ) : (
                         <button
                           type="button"
@@ -514,8 +566,8 @@ export default function DataTable({
                           {blockMutation.isPending
                             ? 'Processing...'
                             : isBlocked
-                            ? 'Unblock'
-                            : 'Block'}
+                              ? 'Unblock'
+                              : 'Block'}
                         </button>
                       )}
                     </td>

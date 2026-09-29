@@ -182,15 +182,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               {pathname === '/dashboard/users'
                 ? 'User Management'
                 : pathname.startsWith('/dashboard/garages')
-                ? 'Garage & Facility Management'
-                : 'Overview'}
+                  ? 'Garage & Facility Management'
+                  : 'Overview'}
             </h1>
             <p className="text-xs text-[var(--sub)] mt-0.5">
               {pathname === '/dashboard/users'
                 ? 'Central Parking Network — Registered Users & Access Control'
                 : pathname.startsWith('/dashboard/garages')
-                ? 'Central Parking Network — Registered Facilities, Slots & Rates'
-                : 'Central Plaza Parking — Live Status'}
+                  ? 'Central Parking Network — Registered Facilities, Slots & Rates'
+                  : 'Central Plaza Parking — Live Status'}
             </p>
           </div>
 
@@ -215,7 +215,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
             {/* Topbar User Profile */}
             <div className="flex items-center gap-2 bg-[var(--bg)] border border-[var(--line)] rounded-md py-1.5 px-2.5 shadow-xs">
-              <div className="avatar !w-6 !h-6 !text-[11px] font-bold" title={user?.email || 'User'}>
+              <div
+                className="avatar !w-6 !h-6 !text-[11px] font-bold"
+                title={user?.email || 'User'}
+              >
                 {userInitial}
               </div>
               <div className="hidden sm:block text-left">

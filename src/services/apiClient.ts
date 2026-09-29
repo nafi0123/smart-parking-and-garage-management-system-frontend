@@ -1,8 +1,7 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { clearAuthSession, getAuthToken } from '@/utils/cookie';
 
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_BASE_API || 'http://localhost:5000/api/v1';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_API || 'http://localhost:5000/api/v1';
 
 let isRedirecting = false;
 
@@ -36,16 +35,19 @@ apiClient.interceptors.response.use(
   async (error: AxiosError<any>) => {
     if (typeof window !== 'undefined') {
       const status = error.response?.status;
-      if ((status === 401 || status === 403) && !isRedirecting) {
+      const url = error.config?.url || '';
+      const method = error.config?.method?.toLowerCase() || 'get';
+
+      // Don't trigger auto-logout on public GET endpoints (like /garages, /garages/nearby)
+      const isPublicGet =
+        method === 'get' && (url.startsWith('/garages') || url.startsWith('garages'));
+
+      if ((status === 401 || status === 403) && !isRedirecting && !isPublicGet) {
         isRedirecting = true;
 
         try {
           // Fire-and-forget backend logout API to clear server cookies
-          await axios.post(
-            `${API_BASE_URL}/auth/logout`,
-            {},
-            { withCredentials: true },
-          );
+          await axios.post(`${API_BASE_URL}/auth/logout`, {}, { withCredentials: true });
         } catch {
           // ignore network error
         } finally {
@@ -66,16 +68,15 @@ apiClient.interceptors.response.use(
       }
     }
 
-    const customError = {
+    const errorMessage =
+      error.response?.data?.message || error.message || 'An unexpected error occurred';
+    const customError = new Error(errorMessage);
+    Object.assign(customError, {
       success: false,
       statusCode: error.response?.status || 500,
-      message:
-        error.response?.data?.message ||
-        error.message ||
-        'An unexpected error occurred',
       data: error.response?.data?.data || null,
       errorSources: error.response?.data?.errorSources,
-    };
+    });
 
     return Promise.reject(customError);
   },

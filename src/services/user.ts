@@ -53,7 +53,9 @@ export const UserService = {
     return apiClient.get('/users', { params: formattedParams });
   },
 
-  blockUser: async (userId: string): Promise<{ statusCode: number; success: boolean; message: string; data?: any }> => {
+  blockUser: async (
+    userId: string,
+  ): Promise<{ statusCode: number; success: boolean; message: string; data?: any }> => {
     return apiClient.patch(`/users/block/${userId}`);
   },
 };
