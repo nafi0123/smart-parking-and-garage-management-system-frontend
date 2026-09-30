@@ -153,27 +153,27 @@ export default function Footer() {
               </h4>
               <ul className="space-y-2 text-xs sm:text-sm text-slate-400">
                 <li>
-                  <Link href="/#search" className="hover:text-cyan-400 transition-colors">
+                  <Link href="/garages" className="hover:text-cyan-400 transition-colors">
                     Find Vacant Spots
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#garages" className="hover:text-cyan-400 transition-colors">
+                  <Link href="/garages" className="hover:text-cyan-400 transition-colors">
                     Explore Garages
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#ev-stations" className="hover:text-cyan-400 transition-colors">
-                    EV Fast Charging Bays
+                  <Link href="/garages?onlyAvailable=true" className="hover:text-cyan-400 transition-colors">
+                    Available Parking Bays
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#map" className="hover:text-cyan-400 transition-colors">
+                  <Link href="/garages" className="hover:text-cyan-400 transition-colors">
                     Interactive Live Map
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#rates" className="hover:text-cyan-400 transition-colors">
+                  <Link href="/garages?sortBy=pricePerHour&sortOrder=asc" className="hover:text-cyan-400 transition-colors">
                     Hourly & Daily Rates
                   </Link>
                 </li>

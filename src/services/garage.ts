@@ -8,6 +8,22 @@ export interface IGarageOwner {
   role?: string;
 }
 
+export interface IGarageReviewUser {
+  id: string;
+  name: string;
+  picture?: string | null;
+}
+
+export interface IGarageReview {
+  id: string;
+  userId: string;
+  garageId: string;
+  rating: number;
+  comment?: string | null;
+  createdAt: string;
+  user?: IGarageReviewUser;
+}
+
 export interface IGarage {
   id: string;
   name: string;
@@ -24,6 +40,7 @@ export interface IGarage {
   totalReviews: number;
   ownerId: string;
   owner?: IGarageOwner;
+  reviews?: IGarageReview[];
   createdAt: string;
   updatedAt: string;
   distanceKm?: number;

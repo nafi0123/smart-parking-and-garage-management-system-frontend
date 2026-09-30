@@ -142,7 +142,7 @@ export default function Navbar() {
     if (maxPrice) queryParams.set('maxPrice', maxPrice);
     if (onlyAvailable) queryParams.set('onlyAvailable', 'true');
 
-    const targetUrl = `/?${queryParams.toString()}`;
+    const targetUrl = searchTerm.trim() ? `/garages?${queryParams.toString()}` : '/garages';
     router.push(targetUrl);
   };
 
@@ -278,10 +278,8 @@ export default function Navbar() {
                   key={garage.id}
                   onClick={() => {
                     setIsSearchOpen(false);
-                    setSearchTerm(garage.name);
-                    const queryParams = new URLSearchParams();
-                    queryParams.set('searchTerm', garage.name);
-                    router.push(`/?${queryParams.toString()}`);
+                    setSearchTerm('');
+                    router.push(`/garages/${garage.id}`);
                   }}
                   className="w-full text-left p-3 hover:bg-slate-50 transition-colors cursor-pointer flex items-center justify-between gap-3 group"
                 >
@@ -389,11 +387,11 @@ export default function Navbar() {
                 if (searchTerm) queryParams.set('searchTerm', searchTerm);
                 if (maxPrice) queryParams.set('maxPrice', maxPrice);
                 if (onlyAvailable) queryParams.set('onlyAvailable', 'true');
-                router.push(`/?${queryParams.toString()}`);
+                router.push(`/garages?${queryParams.toString()}`);
               }}
               className="text-blue-600 font-bold hover:underline text-[11px] cursor-pointer ml-auto"
             >
-              See All Results →
+              See All Garages →
             </button>
           </div>
         </div>
