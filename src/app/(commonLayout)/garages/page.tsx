@@ -63,10 +63,10 @@ function GaragesPageContent() {
     if (urlOnlyAvailable) setOnlyAvailable(true);
   }, [urlSearchTerm, urlMaxPrice, urlOnlyAvailable]);
 
-  // Construct query params
+  // Construct query params (24 items per page)
   const queryParams: IGetAllGaragesParams = {
     page: currentPage,
-    limit: 12,
+    limit: 24,
     sortBy,
     sortOrder,
   };
@@ -580,10 +580,10 @@ function GaragesPageContent() {
                             className={`w-full flex items-center justify-center gap-1.5 rounded px-3.5 py-2.5 text-xs font-semibold text-white transition-all text-center shadow-xs ${
                               isAvailable
                                 ? 'bg-[#0f2a6b] group-hover:bg-[#1e40af] group-active:scale-[0.98]'
-                                : 'bg-slate-600 group-hover:bg-slate-700'
+                                : 'bg-rose-800/80 text-rose-200 border border-rose-700/50'
                             }`}
                           >
-                            <span>{isAvailable ? 'View Details & Book' : 'View Details'}</span>
+                            <span>{isAvailable ? 'View Details & Book' : 'Fully Occupied (0 Free)'}</span>
                             <span className="text-xs transition-transform group-hover:translate-x-1">→</span>
                           </div>
                         </div>
@@ -594,30 +594,61 @@ function GaragesPageContent() {
               </div>
             )}
 
-            {/* Pagination Bar */}
+            {/* Enhanced Pagination Controls (24 items/page) */}
             {totalPages > 1 && (
-              <div className="mt-10 flex items-center justify-center gap-2">
-                <button
-                  type="button"
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  className="rounded border border-[var(--line)] bg-[var(--card)] px-3 py-1.5 text-xs font-semibold text-[var(--ink)] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg)] transition-colors cursor-pointer"
-                >
-                  ← Prev
-                </button>
+              <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-[var(--line)]">
+                <div className="text-xs text-[var(--sub)]">
+                  Showing{' '}
+                  <span className="font-bold text-[var(--ink)]">
+                    {(currentPage - 1) * 24 + 1}–{Math.min(currentPage * 24, totalCount)}
+                  </span>{' '}
+                  of <span className="font-bold text-[var(--ink)]">{totalCount}</span> garages
+                </div>
 
-                <span className="text-xs font-medium text-[var(--sub)] px-2">
-                  Page {currentPage} of {totalPages}
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    disabled={currentPage === 1}
+                    onClick={() => {
+                      setCurrentPage((p) => Math.max(1, p - 1));
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="rounded border border-[var(--line)] bg-[var(--card)] px-3 py-1.5 text-xs font-semibold text-[var(--ink)] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg)] transition-colors cursor-pointer"
+                  >
+                    ← Prev
+                  </button>
 
-                <button
-                  type="button"
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  className="rounded border border-[var(--line)] bg-[var(--card)] px-3 py-1.5 text-xs font-semibold text-[var(--ink)] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg)] transition-colors cursor-pointer"
-                >
-                  Next →
-                </button>
+                  {/* Page number buttons */}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                    <button
+                      key={pageNum}
+                      type="button"
+                      onClick={() => {
+                        setCurrentPage(pageNum);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      className={`min-w-[32px] h-8 rounded text-xs font-bold transition-all cursor-pointer ${
+                        currentPage === pageNum
+                          ? 'bg-[#0f2a6b] text-white shadow-xs'
+                          : 'border border-[var(--line)] bg-[var(--card)] text-[var(--sub)] hover:text-[var(--ink)] hover:bg-[var(--bg)]'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+
+                  <button
+                    type="button"
+                    disabled={currentPage === totalPages}
+                    onClick={() => {
+                      setCurrentPage((p) => Math.min(totalPages, p + 1));
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="rounded border border-[var(--line)] bg-[var(--card)] px-3 py-1.5 text-xs font-semibold text-[var(--ink)] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg)] transition-colors cursor-pointer"
+                  >
+                    Next →
+                  </button>
+                </div>
               </div>
             )}
           </main>

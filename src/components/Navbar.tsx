@@ -490,28 +490,8 @@ export default function Navbar() {
                           onClick={() => setIsProfileOpen(false)}
                           className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-zinc-700 transition-colors"
                         >
-                          <span>▤</span> Dashboard Overview
+                          <span>▤</span> Dashboard
                         </Link>
-
-                        {(user.role === 'ADMIN' || user.role === 'MANAGER') && (
-                          <Link
-                            href="/dashboard/garages"
-                            onClick={() => setIsProfileOpen(false)}
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-zinc-700 transition-colors"
-                          >
-                            <span>🅿</span> Manage Facilities
-                          </Link>
-                        )}
-
-                        {user.role === 'ADMIN' && (
-                          <Link
-                            href="/dashboard/users"
-                            onClick={() => setIsProfileOpen(false)}
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-100 text-zinc-700 transition-colors"
-                          >
-                            <span>👤</span> User Management
-                          </Link>
-                        )}
                       </div>
 
                       <div className="p-1.5 border-t border-slate-100">

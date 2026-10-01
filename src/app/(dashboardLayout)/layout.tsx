@@ -104,6 +104,29 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <span>▤</span> Overview
           </Link>
 
+          {/* Reservations & Bookings (All Roles) */}
+          <Link
+            href="/dashboard/my-bookings"
+            className={
+              pathname.startsWith('/dashboard/my-bookings') ||
+              pathname.startsWith('/dashboard/bookings')
+                ? 'active'
+                : ''
+            }
+          >
+            <span>📋</span> My Bookings
+          </Link>
+
+          {/* Admin & Manager: Incoming Garage Bookings */}
+          {(user?.role === 'ADMIN' || user?.role === 'MANAGER') && (
+            <Link
+              href="/dashboard/manager-bookings"
+              className={pathname.startsWith('/dashboard/manager-bookings') ? 'active' : ''}
+            >
+              <span>📥</span> Manager Bookings
+            </Link>
+          )}
+
           {/* Admin & Manager: Garage Facility Management */}
           {(user?.role === 'ADMIN' || user?.role === 'MANAGER') && (
             <Link
@@ -112,18 +135,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             >
               <span>🅿</span> {user?.role === 'MANAGER' ? 'My Garages' : 'Parking Zones'}
             </Link>
-          )}
-
-          {/* Customer / Driver Navigation */}
-          {user?.role === 'DRIVER' && (
-            <>
-              <Link href="#" className={pathname === '/dashboard/vehicles' ? 'active' : ''}>
-                <span>🚗</span> My Vehicles
-              </Link>
-              <Link href="#" className={pathname === '/dashboard/bookings' ? 'active' : ''}>
-                <span>🎫</span> My Bookings
-              </Link>
-            </>
           )}
 
           {/* Admin Only: System & User Management */}
@@ -181,6 +192,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <h1 className="text-lg sm:text-xl font-bold text-[var(--ink)] tracking-tight">
               {pathname === '/dashboard/users'
                 ? 'User Management'
+                : pathname.startsWith('/dashboard/manager-bookings')
+                ? 'Incoming Garage Bookings'
+                : pathname.startsWith('/dashboard/my-bookings') ||
+                  pathname.startsWith('/dashboard/bookings')
+                ? 'My Reservations & Bookings'
                 : pathname.startsWith('/dashboard/garages')
                   ? 'Garage & Facility Management'
                   : 'Overview'}
@@ -188,6 +204,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <p className="text-xs text-[var(--sub)] mt-0.5">
               {pathname === '/dashboard/users'
                 ? 'Central Parking Network — Registered Users & Access Control'
+                : pathname.startsWith('/dashboard/manager-bookings')
+                ? 'Central Parking Network — Driver Parking Sessions & Slot Control'
+                : pathname.startsWith('/dashboard/my-bookings') ||
+                  pathname.startsWith('/dashboard/bookings')
+                ? 'Central Parking Network — Spot Reservations, SSLCommerz Payments & Invoices'
                 : pathname.startsWith('/dashboard/garages')
                   ? 'Central Parking Network — Registered Facilities, Slots & Rates'
                   : 'Central Plaza Parking — Live Status'}
