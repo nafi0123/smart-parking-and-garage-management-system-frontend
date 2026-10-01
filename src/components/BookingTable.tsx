@@ -301,8 +301,42 @@ export default function BookingTable({
     }
   };
 
-  // Cancel & Refund Booking
+  const [cancellingBookingId, setCancellingBookingId] = useState<string | null>(null);
+
+  // Cancel an unpaid pending booking
+  const handleCancelPendingBooking = async (booking: IBooking) => {
+    const confirmed = await Alert.confirm({
+      title: 'Cancel Pending Booking?',
+      text: `Are you sure you want to cancel your unpaid reservation at ${booking.garage?.name || 'this garage'}?`,
+      confirmButtonText: 'Yes, Cancel Booking',
+      cancelButtonText: 'Keep Booking',
+      icon: 'warning',
+      isDestructive: true,
+    });
+
+    if (!confirmed) return;
+
+    setCancellingBookingId(booking.id);
+    try {
+      Alert.toast('Cancelling pending booking...', 'info');
+      await BookingService.cancelBooking(booking.id);
+      Alert.success('Booking Cancelled', 'Your pending booking has been cancelled successfully.');
+      refetch();
+    } catch (err: any) {
+      console.error('Cancel booking error:', err);
+      Alert.error('Cancellation Failed', err.message || 'Could not cancel booking.');
+    } finally {
+      setCancellingBookingId(null);
+    }
+  };
+
+  // Cancel & Refund Confirmed Booking
   const handleRefund = async (booking: IBooking) => {
+    if (booking.status === 'COMPLETED') {
+      Alert.error('Action Not Allowed', 'This parking session is already COMPLETED and cannot be cancelled or refunded.');
+      return;
+    }
+
     const confirmed = await Alert.confirm({
       title: 'Cancel & Process Refund?',
       text: `Are you sure you want to cancel your reservation at ${booking.garage?.name}? An automatic refund of ৳${booking.totalPrice} will be processed.`,
@@ -759,7 +793,7 @@ export default function BookingTable({
                           {isPending && (
                             <button
                               type="button"
-                              disabled={payingBookingId === booking.id}
+                              disabled={payingBookingId === booking.id || cancellingBookingId === booking.id}
                               onClick={() => handlePayNow(booking.id)}
                               className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] shadow-2xs transition-colors cursor-pointer disabled:opacity-75"
                               title="Complete payment via SSLCommerz"
@@ -768,6 +802,23 @@ export default function BookingTable({
                                 <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
                               ) : (
                                 <span>🔒 Pay ৳{booking.totalPrice}</span>
+                              )}
+                            </button>
+                          )}
+
+                          {/* Cancel Pending Booking */}
+                          {isPending && (
+                            <button
+                              type="button"
+                              disabled={cancellingBookingId === booking.id || payingBookingId === booking.id}
+                              onClick={() => handleCancelPendingBooking(booking)}
+                              className="inline-flex items-center gap-1 px-2 py-1 rounded border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/50 font-bold text-[11px] transition-colors cursor-pointer disabled:opacity-50"
+                              title="Cancel this unpaid reservation"
+                            >
+                              {cancellingBookingId === booking.id ? (
+                                <div className="w-3 h-3 border-2 border-rose-600 border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                <span>✕ Cancel</span>
                               )}
                             </button>
                           )}
@@ -810,17 +861,33 @@ export default function BookingTable({
                             )
                           )}
 
-                          {/* Cancel & Refund Button */}
-                          {canRefund && (
-                            <button
-                              type="button"
-                              disabled={refundingBookingId === booking.id}
-                              onClick={() => handleRefund(booking)}
-                              className="inline-flex items-center gap-1 px-2 py-1 rounded border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100 font-bold text-[11px] transition-colors cursor-pointer disabled:opacity-75"
-                              title="Cancel reservation & refund payment"
-                            >
-                              {refundingBookingId === booking.id ? 'Refunding...' : 'Refund'}
-                            </button>
+                          {/* Cancel & Refund Button for Confirmed Bookings */}
+                          {isConfirmed && (
+                            canRefund ? (
+                              <button
+                                type="button"
+                                disabled={refundingBookingId === booking.id}
+                                onClick={() => handleRefund(booking)}
+                                className="inline-flex items-center gap-1 px-2 py-1 rounded border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/50 font-bold text-[11px] transition-colors cursor-pointer disabled:opacity-75"
+                                title="Cancel reservation & refund payment"
+                              >
+                                {refundingBookingId === booking.id ? (
+                                  <>
+                                    <div className="w-3 h-3 border-2 border-rose-600 border-t-transparent rounded-full animate-spin" />
+                                    <span>Refunding...</span>
+                                  </>
+                                ) : (
+                                  <span>↺ Cancel & Refund</span>
+                                )}
+                              </button>
+                            ) : (
+                              <span
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-help"
+                                title="Cancellations and refunds are only permitted at least 1 hour before scheduled start time."
+                              >
+                                <span>🔒 Non-refundable</span>
+                              </span>
+                            )
                           )}
                         </div>
                       </td>
