@@ -16,6 +16,15 @@ interface GoogleLoginButtonProps {
 
 export default function GoogleLoginButton({ onSuccess, onError }: GoogleLoginButtonProps) {
   const buttonRef = useRef<HTMLDivElement>(null);
+  const onSuccessRef = useRef(onSuccess);
+  const onErrorRef = useRef(onError);
+  const isInitializedRef = useRef(false);
+
+  useEffect(() => {
+    onSuccessRef.current = onSuccess;
+    onErrorRef.current = onError;
+  }, [onSuccess, onError]);
+
   const clientId =
     process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
     '20154548950-uhhvonq6a65a5bacd6096ckp35l0ofp1.apps.googleusercontent.com';
@@ -23,16 +32,19 @@ export default function GoogleLoginButton({ onSuccess, onError }: GoogleLoginBut
   const renderGoogleButton = useCallback(() => {
     if (window.google?.accounts?.id && buttonRef.current) {
       try {
-        window.google.accounts.id.initialize({
-          client_id: clientId,
-          callback: (res: any) => {
-            if (res?.credential) {
-              onSuccess(res.credential);
-            } else if (onError) {
-              onError('Failed to obtain Google credential');
-            }
-          },
-        });
+        if (!isInitializedRef.current) {
+          window.google.accounts.id.initialize({
+            client_id: clientId,
+            callback: (res: any) => {
+              if (res?.credential) {
+                onSuccessRef.current?.(res.credential);
+              } else if (onErrorRef.current) {
+                onErrorRef.current('Failed to obtain Google credential');
+              }
+            },
+          });
+          isInitializedRef.current = true;
+        }
 
         buttonRef.current.innerHTML = '';
         window.google.accounts.id.renderButton(buttonRef.current, {
@@ -46,7 +58,7 @@ export default function GoogleLoginButton({ onSuccess, onError }: GoogleLoginBut
         console.error('Google button render error:', err);
       }
     }
-  }, [clientId, onSuccess, onError]);
+  }, [clientId]);
 
   useEffect(() => {
     renderGoogleButton();

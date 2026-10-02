@@ -1,7 +1,25 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { clearAuthSession, getAuthToken } from '@/utils/cookie';
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_API || 'http://localhost:5000/api/v1';
+export const getApiBaseUrl = (): string => {
+  if (typeof window !== 'undefined') {
+    const isVercelOrRemote =
+      window.location.hostname.includes('vercel.app') ||
+      (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1');
+
+    if (isVercelOrRemote) {
+      return (
+        process.env.NEXT_PUBLIC_BASE_API?.startsWith('https')
+          ? process.env.NEXT_PUBLIC_BASE_API
+          : 'https://smart-parking-backend-omega.vercel.app/api/v1'
+      );
+    }
+  }
+
+  return process.env.NEXT_PUBLIC_BASE_API || 'http://localhost:5000/api/v1';
+};
+
+export const API_BASE_URL = getApiBaseUrl();
 
 let isRedirecting = false;
 
@@ -13,9 +31,10 @@ const apiClient = axios.create({
   },
 });
 
-// Request Interceptor: Attach Bearer Token from Cookie automatically
+// Request Interceptor: Attach dynamic BaseURL & Bearer Token from Cookie
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    config.baseURL = getApiBaseUrl();
     if (typeof window !== 'undefined') {
       const token = getAuthToken();
       if (token && !config.headers.Authorization) {

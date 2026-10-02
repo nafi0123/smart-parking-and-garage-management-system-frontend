@@ -108,8 +108,15 @@ export default function LoginPage() {
           setNeedsVerification(true);
         }
       }
-    } catch (_err) {
-      setError('An unexpected network error occurred. Please try again.');
+    } catch (err: any) {
+      const errorMsg =
+        err?.response?.data?.message ||
+        err?.message ||
+        'Login failed. Please check your credentials.';
+      setError(errorMsg);
+      if (typeof errorMsg === 'string' && errorMsg.toLowerCase().includes('verify')) {
+        setNeedsVerification(true);
+      }
     } finally {
       setLoading(false);
     }
@@ -139,8 +146,12 @@ export default function LoginPage() {
       } else {
         setError(res.message || 'Demo login failed.');
       }
-    } catch (_err) {
-      setError('An unexpected network error occurred during demo login.');
+    } catch (err: any) {
+      const errorMsg =
+        err?.response?.data?.message ||
+        err?.message ||
+        'An unexpected network error occurred during demo login.';
+      setError(errorMsg);
     } finally {
       setLoading(false);
       setActiveDemoRole(null);
@@ -164,8 +175,12 @@ export default function LoginPage() {
       } else {
         setError(res.message || 'Google login failed.');
       }
-    } catch (_err) {
-      setError('An unexpected network error occurred during Google login.');
+    } catch (err: any) {
+      const errorMsg =
+        err?.response?.data?.message ||
+        err?.message ||
+        'An unexpected network error occurred during Google login.';
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
