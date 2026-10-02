@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
+  color-scheme: light;
   --navy: #0f2a6b;
   --navy-2: #1e40af;
   --blue: #3b82f6;
@@ -18,7 +21,9 @@
   --foreground: var(--ink);
 }
 
-/* Dark mode disabled — app is always light mode */
+html {
+  color-scheme: light;
+}
 
 
 @theme inline {
