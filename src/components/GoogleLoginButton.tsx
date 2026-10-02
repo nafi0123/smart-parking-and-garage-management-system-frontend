@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef } from 'react';
 declare global {
   interface Window {
     google?: any;
+    handleGoogleCredentialResponse?: (response: any) => void;
   }
 }
 
@@ -32,16 +33,22 @@ export default function GoogleLoginButton({ onSuccess, onError }: GoogleLoginBut
   const renderGoogleButton = useCallback(() => {
     if (window.google?.accounts?.id && buttonRef.current) {
       try {
+        // Expose callback globally so Google can call it
+        window.handleGoogleCredentialResponse = (res: any) => {
+          if (res?.credential) {
+            onSuccessRef.current?.(res.credential);
+          } else if (onErrorRef.current) {
+            onErrorRef.current('Failed to obtain Google credential');
+          }
+        };
+
         if (!isInitializedRef.current) {
           window.google.accounts.id.initialize({
             client_id: clientId,
-            callback: (res: any) => {
-              if (res?.credential) {
-                onSuccessRef.current?.(res.credential);
-              } else if (onErrorRef.current) {
-                onErrorRef.current('Failed to obtain Google credential');
-              }
-            },
+            callback: window.handleGoogleCredentialResponse,
+            // Use popup mode but with auto_select disabled
+            auto_select: false,
+            cancel_on_tap_outside: true,
           });
           isInitializedRef.current = true;
         }
@@ -50,9 +57,12 @@ export default function GoogleLoginButton({ onSuccess, onError }: GoogleLoginBut
         window.google.accounts.id.renderButton(buttonRef.current, {
           theme: 'outline',
           size: 'large',
-          width: 320,
+          width: buttonRef.current.offsetWidth || 320,
           text: 'continue_with',
           shape: 'rectangular',
+          click_listener: () => {
+            // Ensure any popup blocker won't interfere by pre-requesting
+          },
         });
       } catch (err: any) {
         console.error('Google button render error:', err);
