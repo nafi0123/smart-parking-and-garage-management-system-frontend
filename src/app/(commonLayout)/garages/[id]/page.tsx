@@ -887,7 +887,7 @@ export default function GarageDetailsPage() {
                 </div>
                 <div className="flex items-start gap-1.5">
                   <span className="text-emerald-500 font-bold shrink-0">✓</span>
-                  <span>Full refund allowed up to 1 hour before start time</span>
+                  <span>Full refund allowed anytime prior to parking completion</span>
                 </div>
                 <div className="flex items-start gap-1.5">
                   <span className="text-blue-500 font-bold shrink-0">🛡️</span>

@@ -6,7 +6,7 @@ import type React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import ReviewModal from '@/components/ReviewModal';
 import TableSkeleton from '@/components/TableSkeleton';
-import { API_BASE_URL } from '@/services/apiClient';
+import { getApiBaseUrl } from '@/services/apiClient';
 import { BookingService, type IBooking } from '@/services/booking';
 import { PaymentService } from '@/services/payment';
 import Alert from '@/utils/alert';
@@ -165,7 +165,8 @@ export default function BookingTable({
     try {
       Alert.toast('Generating official PDF Invoice...', 'info');
       const token = getAuthToken();
-      const response = await fetch(`${API_BASE_URL}/bookings/${bookingId}/invoice`, {
+      const baseUrl = getApiBaseUrl();
+      const response = await fetch(`${baseUrl}/bookings/${bookingId}/invoice`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
@@ -177,17 +178,21 @@ export default function BookingTable({
       }
 
       const blob = await response.blob();
-      const fileUrl = window.URL.createObjectURL(blob);
-      const newTab = window.open(fileUrl, '_blank');
-      if (!newTab) {
-        // If popup was blocked, fallback to direct download anchor
-        const a = document.createElement('a');
-        a.href = fileUrl;
-        a.download = `Invoice-${bookingId.slice(0, 8)}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }
+      const pdfBlob = new Blob([blob], { type: 'application/pdf' });
+      const fileUrl = window.URL.createObjectURL(pdfBlob);
+      
+      const a = document.createElement('a');
+      a.href = fileUrl;
+      a.download = `Invoice-${bookingId.slice(0, 8).toUpperCase()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      setTimeout(() => {
+        window.URL.revokeObjectURL(fileUrl);
+      }, 60000);
+
+      Alert.success('Invoice Downloaded', 'Official PDF invoice downloaded successfully.');
     } catch (err: any) {
       console.error('Invoice download error:', err);
       Alert.error('Invoice Failed', err.message || 'Could not load PDF invoice.');
@@ -363,7 +368,7 @@ export default function BookingTable({
     } catch (err: any) {
       Alert.error(
         'Refund Failed',
-        err.message || 'Cancellation must be requested at least 1 hour before start time.',
+        err.message || 'Could not process refund.',
       );
     } finally {
       setRefundingBookingId(null);
@@ -797,7 +802,7 @@ export default function BookingTable({
                   );
                   const isPending = booking.status === 'PENDING';
                   const isConfirmed = booking.status === 'CONFIRMED';
-                  const canRefund = isConfirmed && startTime.getTime() - Date.now() > 3600000;
+                  const canRefund = isConfirmed;
                   const thumb =
                     booking.garage?.images && booking.garage.images.length > 0
                       ? booking.garage.images[0]
