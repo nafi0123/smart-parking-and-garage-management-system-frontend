@@ -12,7 +12,7 @@ export const getApiBaseUrl = (): string => {
     }
   }
   // Server-side or local dev: use env var or fallback
-  return process.env.NEXT_PUBLIC_BASE_API || 'http://localhost:5000/api/v1';
+  return process.env.NEXT_PUBLIC_BASE_API || 'http://localhost:5001/api/v1';
 };
 
 export const API_BASE_URL = getApiBaseUrl();
@@ -21,7 +21,7 @@ let isRedirecting = false;
 
 const apiClient = axios.create({
   baseURL: typeof window === 'undefined'
-    ? (process.env.NEXT_PUBLIC_BASE_API || 'http://localhost:5000/api/v1')
+    ? (process.env.NEXT_PUBLIC_BASE_API || 'http://localhost:5001/api/v1')
     : '/api/v1',
   withCredentials: true,
   headers: {
