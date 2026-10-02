@@ -444,7 +444,9 @@ export default function BookingTable({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
         <div className="p-4 rounded-xl bg-[var(--card)] border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center gap-3.5 hover:border-blue-500/30 transition-colors">
           <div className="w-11 h-11 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-lg shrink-0">
-            🎫
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
           </div>
           <div>
             <div className="text-xl font-extrabold text-[var(--ink)] font-mono">
@@ -456,7 +458,9 @@ export default function BookingTable({
 
         <div className="p-4 rounded-xl bg-[var(--card)] border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center gap-3.5 hover:border-emerald-500/30 transition-colors">
           <div className="w-11 h-11 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-lg shrink-0">
-            ✓
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
           </div>
           <div>
             <div className="text-xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">
@@ -468,7 +472,9 @@ export default function BookingTable({
 
         <div className="p-4 rounded-xl bg-[var(--card)] border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center gap-3.5 hover:border-amber-500/30 transition-colors">
           <div className="w-11 h-11 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-lg shrink-0">
-            ⏳
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
           </div>
           <div>
             <div className="text-xl font-extrabold text-amber-600 dark:text-amber-400 font-mono">
@@ -480,7 +486,9 @@ export default function BookingTable({
 
         <div className="p-4 rounded-xl bg-[var(--card)] border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center gap-3.5 hover:border-purple-500/30 transition-colors">
           <div className="w-11 h-11 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-lg shrink-0">
-            ৳
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
           </div>
           <div>
             <div className="text-xl font-extrabold text-[var(--ink)] font-mono">
@@ -491,8 +499,8 @@ export default function BookingTable({
         </div>
       </div>
 
-      {/* Main Table Card (Exact match of DataTable.tsx styling) */}
-      <div className="w-full bg-[var(--card)] border border-slate-200/90 dark:border-slate-800 rounded-lg shadow-sm overflow-hidden flex flex-col">
+      {/* Main Table Card (Exact match of DataTable.tsx and GarageTable.tsx styling) */}
+      <div className="w-full bg-[var(--card)] border border-slate-200/90 dark:border-slate-800 rounded-lg shadow-sm overflow-hidden flex flex-col my-5">
         {/* Table Header & Toolbar */}
         <div className="p-4 sm:p-5 flex flex-col gap-4 border-b border-slate-200/90 dark:border-slate-800">
           {/* Top Header Row */}
@@ -502,7 +510,7 @@ export default function BookingTable({
                 <h2 className="text-base sm:text-lg font-bold text-[var(--ink)] tracking-tight">
                   {title}
                 </h2>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-blue-500/10 text-[#0f2a6b] dark:text-blue-400 border border-blue-500/20">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-blue-500/10 text-[var(--navy-2)] dark:text-blue-400 border border-blue-500/20">
                   <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                   {total} {badgeLabel}
                 </span>
@@ -525,7 +533,7 @@ export default function BookingTable({
                     setSortOrder('desc');
                     setPage(1);
                   }}
-                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-[var(--bg)] hover:bg-[var(--bg)]/80 text-xs font-semibold text-[var(--sub)] hover:text-[var(--ink)] transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[var(--bg)] hover:bg-[var(--bg)]/80 text-xs font-semibold text-[var(--sub)] hover:text-[var(--ink)] transition-colors cursor-pointer"
                   title="Reset All Filters"
                 >
                   <svg
@@ -554,7 +562,7 @@ export default function BookingTable({
               >
                 <svg
                   className={`w-3.5 h-3.5 ${
-                    isFetching ? 'animate-spin text-[#0f2a6b]' : 'text-[var(--sub)]'
+                    isFetching ? 'animate-spin text-[var(--navy-2)]' : 'text-[var(--sub)]'
                   }`}
                   fill="none"
                   viewBox="0 0 24 24"
@@ -572,18 +580,21 @@ export default function BookingTable({
 
               <Link
                 href="/garages"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#0f2a6b] hover:bg-[#1e40af] text-xs font-bold text-white transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-gradient-to-r from-[#0f2a6b] to-[#1e40af] hover:from-[#0b1f50] hover:to-[#1e3a8a] text-white text-xs font-bold shadow-md hover:shadow-lg transition-all active:scale-95 cursor-pointer"
               >
-                <span>+</span> Book Spot
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                </svg>
+                <span>Book Spot</span>
               </Link>
             </div>
           </div>
 
-          {/* Unified Search & Filter Toolbar */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 bg-[var(--bg)] p-2 rounded-lg border-0">
+          {/* Unified Borderless Filter Toolbar */}
+          <div className="bg-[var(--bg)]/70 rounded-md p-2 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5">
             {/* Search input */}
             <div className="relative flex-1">
-              <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-[var(--sub)]">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[var(--sub)]">
                 <svg
                   className="w-3.5 h-3.5"
                   fill="none"
@@ -612,10 +623,12 @@ export default function BookingTable({
                 <button
                   type="button"
                   onClick={() => setSearchTerm('')}
-                  className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-[var(--sub)] hover:text-[var(--ink)] text-xs cursor-pointer"
+                  className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-[var(--sub)] hover:text-[var(--ink)] text-xs transition-colors cursor-pointer"
                   title="Clear search"
                 >
-                  ✕
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
               )}
             </div>
@@ -649,6 +662,19 @@ export default function BookingTable({
           {/* Error Alert */}
           {errorMessage && (
             <div className="rounded-md bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 p-2.5 text-xs text-red-600 dark:text-red-400 flex items-start gap-2 animate-in fade-in">
+              <svg
+                className="w-4 h-4 shrink-0 mt-0.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
               <div className="flex-1">
                 <p className="font-semibold">{errorMessage}</p>
               </div>
@@ -678,8 +704,20 @@ export default function BookingTable({
                 <tr>
                   <td colSpan={7} className="py-12 px-4 text-center">
                     <div className="flex flex-col items-center justify-center text-[var(--sub)]">
-                      <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-2xl flex items-center justify-center mb-2">
-                        🅿
+                      <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3">
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                          />
+                        </svg>
                       </div>
                       <p className="text-sm font-semibold text-[var(--ink)]">
                         No Reservations Found
@@ -691,9 +729,12 @@ export default function BookingTable({
                       </p>
                       <Link
                         href="/garages"
-                        className="mt-3 inline-block rounded-md bg-[#0f2a6b] hover:bg-[#1e40af] text-white px-4 py-1.5 text-xs font-bold transition-all shadow-xs"
+                        className="mt-3.5 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-[var(--navy-2)] text-white text-xs font-bold hover:bg-[var(--navy)] transition-colors shadow-xs cursor-pointer"
                       >
-                        Explore Garages →
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                        </svg>
+                        <span>Explore Garages</span>
                       </Link>
                     </div>
                   </td>
@@ -712,6 +753,10 @@ export default function BookingTable({
                   const isConfirmed = booking.status === 'CONFIRMED';
                   const canRefund =
                     isConfirmed && startTime.getTime() - Date.now() > 3600000;
+                  const thumb =
+                    booking.garage?.images && booking.garage.images.length > 0
+                      ? booking.garage.images[0]
+                      : null;
 
                   return (
                     <tr
@@ -720,42 +765,100 @@ export default function BookingTable({
                     >
                       {/* Garage Facility */}
                       <td className="py-3 px-4">
-                        <div className="space-y-0.5">
-                          <Link
-                            href={`/garages/${booking.garageId}`}
-                            className="font-bold text-[var(--ink)] group-hover:text-blue-600 dark:group-hover:text-blue-400 hover:underline block"
-                          >
-                            {booking.garage?.name || 'Parking Facility'}
-                          </Link>
-                          <div className="text-[11px] text-[var(--sub)] flex items-center gap-1 truncate max-w-[200px]">
-                            <span>📍</span>
-                            <span>{booking.garage?.address || booking.garage?.location || 'Dhaka'}</span>
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-[var(--bg)] overflow-hidden shrink-0 flex items-center justify-center text-sm font-bold border border-slate-200/60 dark:border-slate-800">
+                            {thumb ? (
+                              <img
+                                src={thumb}
+                                alt={booking.garage?.name || 'Garage'}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <svg
+                                className="w-5 h-5 text-blue-500/70"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={1.75}
+                                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                                />
+                              </svg>
+                            )}
                           </div>
-                          <div className="text-[10px] font-mono text-slate-400">
-                            ID: #{booking.id.slice(0, 8).toUpperCase()}
+                          <div className="truncate max-w-[220px]">
+                            <Link
+                              href={`/garages/${booking.garageId}`}
+                              className="font-bold text-[var(--ink)] hover:text-[var(--navy-2)] dark:hover:text-blue-400 text-xs truncate block cursor-pointer transition-colors"
+                            >
+                              {booking.garage?.name || 'Parking Facility'}
+                            </Link>
+                            <div className="text-[11px] text-[var(--sub)] truncate flex items-center gap-1 mt-0.5">
+                              <svg
+                                className="w-3 h-3 text-slate-400 shrink-0"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                              </svg>
+                              <span className="truncate">{booking.garage?.address || booking.garage?.location || 'Dhaka'}</span>
+                            </div>
+                            <div className="text-[10px] font-mono text-[var(--sub)] mt-0.5">
+                              ID: #{booking.id.slice(0, 8).toUpperCase()}
+                            </div>
                           </div>
                         </div>
                       </td>
 
                       {/* Schedule */}
                       <td className="py-3 px-4">
-                        <div className="space-y-0.5">
-                          <div className="font-semibold text-[var(--ink)] text-[11px]">
-                            In: {startTime.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}
+                        <div className="space-y-1 text-xs">
+                          <div className="flex items-center gap-1.5 font-semibold text-[var(--ink)]">
+                            <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">IN</span>
+                            <span>{startTime.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}</span>
                           </div>
-                          <div className="font-semibold text-[var(--ink)] text-[11px]">
-                            Out: {endTime.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}
+                          <div className="flex items-center gap-1.5 font-semibold text-[var(--ink)]">
+                            <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400">OUT</span>
+                            <span>{endTime.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}</span>
                           </div>
-                          <div className="text-[10px] text-blue-600 dark:text-blue-400 font-medium">
-                            Duration: {durationHours} hour{durationHours > 1 ? 's' : ''}
+                          <div className="text-[10px] text-[var(--sub)] flex items-center gap-1">
+                            <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>{durationHours} hour{durationHours > 1 ? 's' : ''} duration</span>
                           </div>
                         </div>
                       </td>
 
                       {/* Vehicle */}
                       <td className="py-3 px-4">
-                        <div className="font-mono font-bold text-[var(--ink)] text-xs">
-                          {booking.vehicleNumber || '—'}
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg bg-[var(--bg)] border border-slate-200/60 dark:border-slate-800 flex items-center justify-center text-[var(--sub)] shrink-0">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 7h8m-8 3h8m-9 8h10a2 2 0 002-2v-5a2 2 0 00-2-2H7a2 2 0 00-2 2v5a2 2 0 002 2zm1-5a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z" />
+                            </svg>
+                          </div>
+                          <div>
+                            <div className="font-mono font-bold text-[var(--ink)] text-xs">
+                              {booking.vehicleNumber || '—'}
+                            </div>
+                            <div className="text-[10px] text-[var(--sub)]">Slot Reserved</div>
+                          </div>
                         </div>
                       </td>
 
@@ -765,7 +868,7 @@ export default function BookingTable({
                           ৳{booking.totalPrice}
                         </div>
                         {booking.garage?.pricePerHour && (
-                          <div className="text-[10px] text-[var(--sub)]">
+                          <div className="text-[10px] text-[var(--sub)] font-mono">
                             ৳{booking.garage.pricePerHour}/hr
                           </div>
                         )}
@@ -779,8 +882,11 @@ export default function BookingTable({
                         <div className="space-y-1">
                           {getPaymentBadge(booking.payment?.status)}
                           {booking.payment?.transactionId && (
-                            <div className="text-[10px] font-mono text-[var(--sub)] truncate max-w-[130px]">
-                              {booking.payment.transactionId}
+                            <div className="text-[10px] font-mono text-[var(--sub)] truncate max-w-[130px] flex items-center gap-1">
+                              <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                              </svg>
+                              <span className="truncate">{booking.payment.transactionId}</span>
                             </div>
                           )}
                         </div>
@@ -788,20 +894,94 @@ export default function BookingTable({
 
                       {/* Action Buttons */}
                       <td className="py-3 px-4 text-right">
-                        <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                        <div className="flex items-center justify-end gap-1.5">
+                          {/* View Garage Facility Details */}
+                          <Link
+                            href={`/garages/${booking.garageId}`}
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 border border-sky-500/20 transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer group"
+                            title="View Garage Facility"
+                            aria-label={`View garage facility ${booking.garage?.name || ''}`}
+                          >
+                            <svg
+                              className="w-4 h-4 transition-transform group-hover:scale-110"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                              />
+                            </svg>
+                          </Link>
+
+                          {/* Invoice PDF Download for Confirmed or Completed Bookings */}
+                          {(isConfirmed || booking.status === 'COMPLETED') && (
+                            <button
+                              type="button"
+                              disabled={downloadingInvoiceId === booking.id}
+                              onClick={() => handleViewInvoice(booking.id)}
+                              className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer disabled:opacity-50 group"
+                              title="Download Official PDF Invoice"
+                              aria-label="Download Official PDF Invoice"
+                            >
+                              {downloadingInvoiceId === booking.id ? (
+                                <div className="w-3.5 h-3.5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                <svg
+                                  className="w-4 h-4 transition-transform group-hover:scale-110"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                                  />
+                                </svg>
+                              )}
+                            </button>
+                          )}
+
                           {/* Pay Now Button for Pending Bookings */}
                           {isPending && (
                             <button
                               type="button"
                               disabled={payingBookingId === booking.id || cancellingBookingId === booking.id}
                               onClick={() => handlePayNow(booking.id)}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] shadow-2xs transition-colors cursor-pointer disabled:opacity-75"
-                              title="Complete payment via SSLCommerz"
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-bold text-xs transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer disabled:opacity-50 group"
+                              title={`Pay ৳${booking.totalPrice} via SSLCommerz`}
+                              aria-label={`Pay ৳${booking.totalPrice}`}
                             >
                               {payingBookingId === booking.id ? (
-                                <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                <div className="w-3.5 h-3.5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
                               ) : (
-                                <span>🔒 Pay ৳{booking.totalPrice}</span>
+                                <>
+                                  <svg
+                                    className="w-3.5 h-3.5 transition-transform group-hover:scale-110"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                                    />
+                                  </svg>
+                                  <span>Pay ৳{booking.totalPrice}</span>
+                                </>
                               )}
                             </button>
                           )}
@@ -812,50 +992,57 @@ export default function BookingTable({
                               type="button"
                               disabled={cancellingBookingId === booking.id || payingBookingId === booking.id}
                               onClick={() => handleCancelPendingBooking(booking)}
-                              className="inline-flex items-center gap-1 px-2 py-1 rounded border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/50 font-bold text-[11px] transition-colors cursor-pointer disabled:opacity-50"
-                              title="Cancel this unpaid reservation"
+                              className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer disabled:opacity-50 group"
+                              title="Cancel Unpaid Reservation"
+                              aria-label="Cancel Unpaid Reservation"
                             >
                               {cancellingBookingId === booking.id ? (
-                                <div className="w-3 h-3 border-2 border-rose-600 border-t-transparent rounded-full animate-spin" />
+                                <div className="w-3.5 h-3.5 border-2 border-rose-600 border-t-transparent rounded-full animate-spin" />
                               ) : (
-                                <span>✕ Cancel</span>
+                                <svg
+                                  className="w-4 h-4 transition-transform group-hover:scale-110"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M6 18L18 6M6 6l12 12"
+                                  />
+                                </svg>
                               )}
-                            </button>
-                          )}
-
-                          {/* Invoice Download for Confirmed or Completed Bookings */}
-                          {(isConfirmed || booking.status === 'COMPLETED') && (
-                            <button
-                              type="button"
-                              disabled={downloadingInvoiceId === booking.id}
-                              onClick={() => handleViewInvoice(booking.id)}
-                              className="inline-flex items-center gap-1 px-2 py-1 rounded border border-slate-200 dark:border-slate-700 bg-[var(--card)] hover:bg-[var(--bg)] text-[var(--ink)] font-bold text-[11px] shadow-2xs transition-colors cursor-pointer disabled:opacity-50"
-                              title="Download official PDF Invoice"
-                            >
-                              {downloadingInvoiceId === booking.id ? (
-                                <div className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                              ) : (
-                                <span>📄</span>
-                              )}
-                              <span>PDF</span>
                             </button>
                           )}
 
                           {/* Rate Garage Review Button - ONLY for COMPLETED bookings */}
                           {booking.status === 'COMPLETED' && (
                             booking.review ? (
-                              <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-600 dark:text-amber-400 font-bold text-[11px]">
-                                <span>★</span>
+                              <Link
+                                href="/dashboard/my-reviews"
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-bold transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs group"
+                                title="View review in My Reviews"
+                              >
+                                <svg className="w-3.5 h-3.5 text-amber-500 fill-amber-500" viewBox="0 0 20 20">
+                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
                                 <span>{booking.review.rating}.0 Rated</span>
-                              </span>
+                              </Link>
                             ) : (
                               <button
                                 type="button"
                                 onClick={() => setSelectedBookingForReview(booking)}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-amber-500 hover:bg-amber-600 text-white font-bold text-[11px] shadow-2xs transition-colors cursor-pointer"
-                                title="Leave feedback for this completed parking session"
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/20 font-bold text-xs transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer group"
+                                title="Rate & Review this Garage"
+                                aria-label="Rate & Review this Garage"
                               >
-                                <span>★</span>
+                                <svg
+                                  className="w-3.5 h-3.5 text-amber-500 fill-amber-500 transition-transform group-hover:scale-110"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
                                 <span>Rate Garage</span>
                               </button>
                             )
@@ -868,24 +1055,41 @@ export default function BookingTable({
                                 type="button"
                                 disabled={refundingBookingId === booking.id}
                                 onClick={() => handleRefund(booking)}
-                                className="inline-flex items-center gap-1 px-2 py-1 rounded border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/50 font-bold text-[11px] transition-colors cursor-pointer disabled:opacity-75"
-                                title="Cancel reservation & refund payment"
+                                className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer disabled:opacity-50 group"
+                                title={`Cancel Reservation & Refund ৳${booking.totalPrice}`}
+                                aria-label={`Cancel Reservation & Refund ৳${booking.totalPrice}`}
                               >
                                 {refundingBookingId === booking.id ? (
-                                  <>
-                                    <div className="w-3 h-3 border-2 border-rose-600 border-t-transparent rounded-full animate-spin" />
-                                    <span>Refunding...</span>
-                                  </>
+                                  <div className="w-3.5 h-3.5 border-2 border-rose-600 border-t-transparent rounded-full animate-spin" />
                                 ) : (
-                                  <span>↺ Cancel & Refund</span>
+                                  <svg
+                                    className="w-4 h-4 transition-transform group-hover:scale-110"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+                                    />
+                                  </svg>
                                 )}
                               </button>
                             ) : (
                               <span
-                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-help"
-                                title="Cancellations and refunds are only permitted at least 1 hour before scheduled start time."
+                                className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200/80 dark:border-slate-700 cursor-help"
+                                title="Non-refundable: Cancellation allowed up to 1 hour before scheduled time"
                               >
-                                <span>🔒 Non-refundable</span>
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                                  />
+                                </svg>
                               </span>
                             )
                           )}

@@ -1,9 +1,9 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import Link from 'next/link';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import GarageDetailsModal from '@/components/GarageDetailsModal';
 import GarageFormModal from '@/components/GarageFormModal';
 import TableSkeleton from '@/components/TableSkeleton';
 import { GarageService, type IGarage } from '@/services/garage';
@@ -159,7 +159,6 @@ export default function GarageTable({
   // Modal States
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingGarage, setEditingGarage] = useState<IGarage | null>(null);
-  const [selectedGarage, setSelectedGarage] = useState<IGarage | null>(null);
 
   // Load user from Cookie and set default view scope
   useEffect(() => {
@@ -561,7 +560,11 @@ export default function GarageTable({
                       {/* Facility info */}
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-[var(--bg)] overflow-hidden shrink-0 flex items-center justify-center text-sm font-bold border border-slate-200/60 dark:border-slate-800">
+                          <Link
+                            href={`/garages/${garage.id}`}
+                            className="w-10 h-10 rounded-lg bg-[var(--bg)] overflow-hidden shrink-0 flex items-center justify-center text-sm font-bold border border-slate-200/60 dark:border-slate-800 hover:opacity-85 transition-opacity"
+                            title={`View ${garage.name}`}
+                          >
                             {thumb ? (
                               <img
                                 src={thumb}
@@ -583,15 +586,14 @@ export default function GarageTable({
                                 />
                               </svg>
                             )}
-                          </div>
+                          </Link>
                           <div className="truncate max-w-[260px]">
-                            <button
-                              type="button"
-                              onClick={() => setSelectedGarage(garage)}
-                              className="font-bold text-[var(--ink)] hover:text-[var(--navy-2)] dark:hover:text-blue-400 text-xs truncate text-left cursor-pointer transition-colors"
+                            <Link
+                              href={`/garages/${garage.id}`}
+                              className="font-bold text-[var(--ink)] hover:text-[var(--navy-2)] dark:hover:text-blue-400 text-xs truncate text-left cursor-pointer transition-colors block"
                             >
                               {garage.name}
-                            </button>
+                            </Link>
                             <div className="text-[11px] text-[var(--sub)] truncate flex items-center gap-1 mt-0.5">
                               <svg
                                 className="w-3 h-3 text-slate-400 shrink-0"
@@ -698,11 +700,10 @@ export default function GarageTable({
                       <td className="py-3 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           {/* View Button */}
-                          <button
-                            type="button"
-                            onClick={() => setSelectedGarage(garage)}
+                          <Link
+                            href={`/garages/${garage.id}`}
                             className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 border border-sky-500/20 transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer group"
-                            title="View Facility Details"
+                            title="View Facility Page"
                             aria-label={`View details for ${garage.name}`}
                           >
                             <svg
@@ -724,7 +725,7 @@ export default function GarageTable({
                                 d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                               />
                             </svg>
-                          </button>
+                          </Link>
 
                           {/* Edit & Delete Buttons (Admin or Facility Owner only) */}
                           {canManageGarage && (
@@ -867,19 +868,6 @@ export default function GarageTable({
           setEditingGarage(null);
         }}
         initialData={editingGarage}
-      />
-
-      {/* Details Modal */}
-      <GarageDetailsModal
-        isOpen={!!selectedGarage}
-        onClose={() => setSelectedGarage(null)}
-        garage={selectedGarage}
-        onEdit={
-          selectedGarage &&
-          (isUserAdmin || (currentUser?.id && selectedGarage.ownerId === currentUser.id))
-            ? (g) => handleOpenEdit(g)
-            : undefined
-        }
       />
     </>
   );

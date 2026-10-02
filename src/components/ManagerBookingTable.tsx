@@ -290,33 +290,35 @@ export default function ManagerBookingTable({
     switch (status) {
       case 'CONFIRMED':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             CONFIRMED
           </span>
         );
       case 'COMPLETED':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 dark:bg-blue-950/80 dark:text-blue-300 border border-blue-300 dark:border-blue-800">
-            ✓ COMPLETED
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+            COMPLETED
           </span>
         );
       case 'PENDING':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
             PENDING
           </span>
         );
       case 'CANCELLED':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-300 dark:border-rose-800">
-            ✕ CANCELLED
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+            CANCELLED
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300">
             {status}
           </span>
         );
@@ -327,20 +329,23 @@ export default function ManagerBookingTable({
     switch (status) {
       case 'PAID':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-            ● PAID
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            PAID
           </span>
         );
       case 'PENDING':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-            ○ UNPAID
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+            UNPAID
           </span>
         );
       case 'REFUNDED':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
-            ↺ REFUNDED
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
+            REFUNDED
           </span>
         );
       default:
@@ -360,7 +365,9 @@ export default function ManagerBookingTable({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
         <div className="p-4 rounded-xl bg-[var(--card)] border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center gap-3.5 hover:border-blue-500/30 transition-colors">
           <div className="w-11 h-11 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-lg shrink-0">
-            🅿
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
           </div>
           <div>
             <div className="text-xl font-extrabold text-[var(--ink)] font-mono">
@@ -372,7 +379,9 @@ export default function ManagerBookingTable({
 
         <div className="p-4 rounded-xl bg-[var(--card)] border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center gap-3.5 hover:border-emerald-500/30 transition-colors">
           <div className="w-11 h-11 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-lg shrink-0">
-            ⚡
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
           </div>
           <div>
             <div className="text-xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">
@@ -384,7 +393,9 @@ export default function ManagerBookingTable({
 
         <div className="p-4 rounded-xl bg-[var(--card)] border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center gap-3.5 hover:border-blue-500/30 transition-colors">
           <div className="w-11 h-11 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-lg shrink-0">
-            ✓
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M5 13l4 4L19 7" />
+            </svg>
           </div>
           <div>
             <div className="text-xl font-extrabold text-blue-600 dark:text-blue-400 font-mono">
@@ -396,7 +407,9 @@ export default function ManagerBookingTable({
 
         <div className="p-4 rounded-xl bg-[var(--card)] border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center gap-3.5 hover:border-purple-500/30 transition-colors">
           <div className="w-11 h-11 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-lg shrink-0">
-            ৳
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
           </div>
           <div>
             <div className="text-xl font-extrabold text-[var(--ink)] font-mono">
@@ -581,10 +594,10 @@ export default function ManagerBookingTable({
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="bg-[var(--bg)] border-b border-slate-200/90 dark:border-slate-800 text-[var(--sub)] font-bold uppercase tracking-wider text-[10px]">
-                <th className="py-2.5 px-4">Customer / Driver (Who Booked)</th>
-                <th className="py-2.5 px-4">Your Garage Facility</th>
-                <th className="py-2.5 px-4">Schedule</th>
-                <th className="py-2.5 px-4">Vehicle Plate</th>
+                <th className="py-2.5 px-4">Driver Details</th>
+                <th className="py-2.5 px-4">Garage Facility</th>
+                <th className="py-2.5 px-4">Reservation Schedule</th>
+                <th className="py-2.5 px-4">Vehicle</th>
                 <th className="py-2.5 px-4">Fare & Payment</th>
                 <th className="py-2.5 px-4">Booking Status</th>
                 <th className="py-2.5 px-4 text-right">Manager Actions</th>
@@ -597,8 +610,20 @@ export default function ManagerBookingTable({
                 <tr>
                   <td colSpan={7} className="py-12 px-4 text-center">
                     <div className="flex flex-col items-center justify-center text-[var(--sub)]">
-                      <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-2xl flex items-center justify-center mb-2">
-                        🅿
+                      <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3">
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                          />
+                        </svg>
                       </div>
                       <p className="text-sm font-semibold text-[var(--ink)]">
                         No Incoming Bookings Found
@@ -624,6 +649,10 @@ export default function ManagerBookingTable({
                   const isPending = booking.status === 'PENDING';
                   const isConfirmed = booking.status === 'CONFIRMED';
                   const isCompleted = booking.status === 'COMPLETED';
+                  const thumb =
+                    booking.garage?.images && booking.garage.images.length > 0
+                      ? booking.garage.images[0]
+                      : null;
 
                   return (
                     <tr
@@ -633,7 +662,7 @@ export default function ManagerBookingTable({
                       {/* Driver Details */}
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-7 h-7 rounded-full bg-slate-700 text-white flex items-center justify-center font-bold text-xs shrink-0">
+                          <div className="w-8 h-8 rounded-lg bg-[var(--navy-2)] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
                             {booking.user?.name?.charAt(0).toUpperCase() || 'D'}
                           </div>
                           <div className="space-y-0.5 min-w-0">
@@ -641,16 +670,19 @@ export default function ManagerBookingTable({
                               <span className="font-bold text-[var(--ink)] truncate max-w-[140px]">
                                 {booking.user?.name || 'Driver User'}
                               </span>
-                              <span className="rounded bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 px-1 py-0.2 text-[9px] font-bold">
-                                Customer
+                              <span className="rounded-md bg-blue-500/10 text-[var(--navy-2)] dark:text-blue-400 border border-blue-500/20 px-1.5 py-0.2 text-[9px] font-bold">
+                                Driver
                               </span>
                             </div>
                             <div className="text-[11px] font-mono text-[var(--sub)] truncate max-w-[150px]">
                               {booking.user?.email}
                             </div>
                             {booking.user?.phone && (
-                              <div className="text-[10px] text-slate-500">
-                                📞 {booking.user.phone}
+                              <div className="text-[10px] text-[var(--sub)] flex items-center gap-1">
+                                <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                                <span>{booking.user.phone}</span>
                               </div>
                             )}
                           </div>
@@ -659,47 +691,82 @@ export default function ManagerBookingTable({
 
                       {/* Garage Facility */}
                       <td className="py-3 px-4">
-                        <div className="space-y-0.5">
-                          <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-9 h-9 rounded-lg bg-[var(--bg)] overflow-hidden shrink-0 flex items-center justify-center text-sm font-bold border border-slate-200/60 dark:border-slate-800">
+                            {thumb ? (
+                              <img
+                                src={thumb}
+                                alt={booking.garage?.name || 'Garage'}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <svg
+                                className="w-4 h-4 text-blue-500/70"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={1.75}
+                                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                                />
+                              </svg>
+                            )}
+                          </div>
+                          <div className="space-y-0.5 min-w-0 max-w-[160px]">
                             <Link
                               href={`/garages/${booking.garageId}`}
-                              className="font-bold text-[var(--ink)] group-hover:text-blue-600 dark:group-hover:text-blue-400 hover:underline block truncate max-w-[160px]"
+                              className="font-bold text-[var(--ink)] group-hover:text-blue-600 dark:group-hover:text-blue-400 hover:underline block truncate"
                             >
                               {booking.garage?.name || 'Parking Facility'}
                             </Link>
-                            <span className="rounded bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 px-1 py-0.2 text-[9px] font-bold shrink-0">
-                              Your Garage
-                            </span>
-                          </div>
-                          <div className="text-[11px] text-[var(--sub)] flex items-center gap-1 truncate max-w-[180px]">
-                            <span>📍</span>
-                            <span>{booking.garage?.address || 'Dhaka'}</span>
-                          </div>
-                          <div className="text-[10px] font-mono text-slate-400">
-                            ID: #{booking.id.slice(0, 8).toUpperCase()}
+                            <div className="text-[11px] text-[var(--sub)] flex items-center gap-1 truncate">
+                              <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                              </svg>
+                              <span className="truncate">{booking.garage?.address || 'Dhaka'}</span>
+                            </div>
+                            <div className="text-[10px] font-mono text-[var(--sub)]">
+                              ID: #{booking.id.slice(0, 8).toUpperCase()}
+                            </div>
                           </div>
                         </div>
                       </td>
 
                       {/* Schedule */}
                       <td className="py-3 px-4">
-                        <div className="space-y-0.5">
-                          <div className="font-semibold text-[var(--ink)] text-[11px]">
-                            In: {startTime.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}
+                        <div className="space-y-1 text-xs">
+                          <div className="flex items-center gap-1.5 font-semibold text-[var(--ink)]">
+                            <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">IN</span>
+                            <span>{startTime.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}</span>
                           </div>
-                          <div className="font-semibold text-[var(--ink)] text-[11px]">
-                            Out: {endTime.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}
+                          <div className="flex items-center gap-1.5 font-semibold text-[var(--ink)]">
+                            <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400">OUT</span>
+                            <span>{endTime.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}</span>
                           </div>
-                          <div className="text-[10px] text-blue-600 dark:text-blue-400 font-medium">
-                            Duration: {durationHours} hour{durationHours > 1 ? 's' : ''}
+                          <div className="text-[10px] text-[var(--sub)] flex items-center gap-1">
+                            <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>{durationHours} hour{durationHours > 1 ? 's' : ''}</span>
                           </div>
                         </div>
                       </td>
 
                       {/* Vehicle */}
                       <td className="py-3 px-4">
-                        <div className="font-mono font-bold text-[var(--ink)] text-xs">
-                          {booking.vehicleNumber || '—'}
+                        <div className="flex items-center gap-1.5">
+                          <div className="w-6 h-6 rounded-md bg-[var(--bg)] border border-slate-200/60 dark:border-slate-800 flex items-center justify-center text-[var(--sub)] shrink-0">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 7h8m-8 3h8m-9 8h10a2 2 0 002-2v-5a2 2 0 00-2-2H7a2 2 0 00-2 2v5a2 2 0 002 2zm1-5a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z" />
+                            </svg>
+                          </div>
+                          <div className="font-mono font-bold text-[var(--ink)] text-xs">
+                            {booking.vehicleNumber || '—'}
+                          </div>
                         </div>
                       </td>
 
@@ -716,16 +783,57 @@ export default function ManagerBookingTable({
 
                       {/* Manager Action Controls */}
                       <td className="py-3 px-4 text-right">
-                        <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                        <div className="flex items-center justify-end gap-1.5">
+                          {/* View Garage Facility Details */}
+                          <Link
+                            href={`/garages/${booking.garageId}`}
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 border border-sky-500/20 transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer group"
+                            title="View Garage Facility"
+                            aria-label={`View garage facility ${booking.garage?.name || ''}`}
+                          >
+                            <svg
+                              className="w-4 h-4 transition-transform group-hover:scale-110"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                              />
+                            </svg>
+                          </Link>
+
                           {/* If Pending: Confirm */}
                           {isPending && (
                             <button
                               type="button"
                               onClick={() => handleUpdateStatus(booking, 'CONFIRMED')}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] shadow-2xs transition-colors cursor-pointer"
+                              className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer group"
                               title="Confirm booking and occupy slot"
+                              aria-label="Confirm booking"
                             >
-                              ✓ Confirm
+                              <svg
+                                className="w-4 h-4 transition-transform group-hover:scale-110"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2.5}
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
                             </button>
                           )}
 
@@ -734,10 +842,23 @@ export default function ManagerBookingTable({
                             <button
                               type="button"
                               onClick={() => handleUpdateStatus(booking, 'COMPLETED')}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] shadow-2xs transition-colors cursor-pointer"
+                              className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer group"
                               title="Vehicle left garage: Mark completed and release slot"
+                              aria-label="Mark completed"
                             >
-                              ✓ Mark Complete
+                              <svg
+                                className="w-4 h-4 transition-transform group-hover:scale-110"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                />
+                              </svg>
                             </button>
                           )}
 
@@ -746,16 +867,32 @@ export default function ManagerBookingTable({
                             <button
                               type="button"
                               onClick={() => handleUpdateStatus(booking, 'CANCELLED')}
-                              className="inline-flex items-center gap-1 px-2 py-1 rounded border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100 font-bold text-[11px] transition-colors cursor-pointer"
+                              className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 transition-all duration-150 active:scale-95 shadow-2xs hover:shadow-xs cursor-pointer group"
                               title="Cancel this booking"
+                              aria-label="Cancel this booking"
                             >
-                              Cancel
+                              <svg
+                                className="w-4 h-4 transition-transform group-hover:scale-110"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
                             </button>
                           )}
 
                           {isCompleted && (
-                            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-                              Completed Session
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                              <svg className="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span>Completed</span>
                             </span>
                           )}
                         </div>

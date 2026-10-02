@@ -4,6 +4,10 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import type React from 'react';
 import { useEffect, useState } from 'react';
+import { FaRegStar } from 'react-icons/fa6';
+import { FiLogOut } from 'react-icons/fi';
+import { LuCalendarCheck, LuInbox, LuLayoutDashboard, LuUsers } from 'react-icons/lu';
+import { RiParkingBoxLine } from 'react-icons/ri';
 import { AuthService } from '@/services/auth';
 import Alert from '@/utils/alert';
 import { clearAuthSession, getAuthToken, getAuthUser } from '@/utils/cookie';
@@ -101,7 +105,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         <nav className="side-nav">
           <Link href="/dashboard" className={pathname === '/dashboard' ? 'active' : ''}>
-            <span>▤</span> Overview
+            <LuLayoutDashboard className="w-4 h-4 shrink-0" /> Overview
           </Link>
 
           {/* Reservations & Bookings (All Roles) */}
@@ -114,7 +118,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 : ''
             }
           >
-            <span>📋</span> My Bookings
+            <LuCalendarCheck className="w-4 h-4 shrink-0" /> My Bookings
+          </Link>
+
+          {/* User Reviews (All Roles) */}
+          <Link
+            href="/dashboard/my-reviews"
+            className={
+              pathname.startsWith('/dashboard/my-reviews') ||
+              pathname.startsWith('/dashboard/reviews')
+                ? 'active'
+                : ''
+            }
+          >
+            <FaRegStar className="w-4 h-4 shrink-0" /> My Reviews
           </Link>
 
           {/* Admin & Manager: Incoming Garage Bookings */}
@@ -123,7 +140,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               href="/dashboard/manager-bookings"
               className={pathname.startsWith('/dashboard/manager-bookings') ? 'active' : ''}
             >
-              <span>📥</span> Manager Bookings
+              <LuInbox className="w-4 h-4 shrink-0" /> Manager Bookings
             </Link>
           )}
 
@@ -133,7 +150,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               href="/dashboard/garages"
               className={pathname.startsWith('/dashboard/garages') ? 'active' : ''}
             >
-              <span>🅿</span> {user?.role === 'MANAGER' ? 'My Garages' : 'Parking Zones'}
+              <RiParkingBoxLine className="w-4 h-4 shrink-0" />{' '}
+              {user?.role === 'MANAGER' ? 'My Garages' : 'Parking Zones'}
             </Link>
           )}
 
@@ -143,7 +161,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               href="/dashboard/users"
               className={pathname === '/dashboard/users' ? 'active' : ''}
             >
-              <span>👤</span> Users
+              <LuUsers className="w-4 h-4 shrink-0" /> Users
             </Link>
           )}
         </nav>
@@ -163,23 +181,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             disabled={loggingOut}
             className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-red-500/15 hover:bg-red-500/25 text-red-300 font-medium text-xs transition-colors border border-red-500/20 cursor-pointer"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              role="img"
-              aria-label="Logout icon"
-            >
-              <title>Logout</title>
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-              />
-            </svg>
-            {loggingOut ? 'Logging out...' : 'Sign Out'}
+            <FiLogOut className="w-4 h-4 shrink-0" />
+            <span>{loggingOut ? 'Logging out...' : 'Sign Out'}</span>
           </button>
         </div>
       </aside>
@@ -194,6 +197,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 ? 'User Management'
                 : pathname.startsWith('/dashboard/manager-bookings')
                 ? 'Incoming Garage Bookings'
+                : pathname.startsWith('/dashboard/my-reviews') ||
+                  pathname.startsWith('/dashboard/reviews')
+                ? 'My Reviews & Ratings'
                 : pathname.startsWith('/dashboard/my-bookings') ||
                   pathname.startsWith('/dashboard/bookings')
                 ? 'My Reservations & Bookings'
@@ -206,6 +212,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 ? 'Central Parking Network — Registered Users & Access Control'
                 : pathname.startsWith('/dashboard/manager-bookings')
                 ? 'Central Parking Network — Driver Parking Sessions & Slot Control'
+                : pathname.startsWith('/dashboard/my-reviews') ||
+                  pathname.startsWith('/dashboard/reviews')
+                ? 'Central Parking Network — Your Verified Reviews, Star Ratings & Garage Feedback'
                 : pathname.startsWith('/dashboard/my-bookings') ||
                   pathname.startsWith('/dashboard/bookings')
                 ? 'Central Parking Network — Spot Reservations, SSLCommerz Payments & Invoices'

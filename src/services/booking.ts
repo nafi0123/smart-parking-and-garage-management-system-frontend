@@ -23,6 +23,7 @@ export interface IBookingGarage {
   address: string;
   location?: string | null;
   pricePerHour: number;
+  images?: string[];
   owner?: {
     id: string;
     name: string;
