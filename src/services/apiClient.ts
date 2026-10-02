@@ -3,19 +3,15 @@ import { clearAuthSession, getAuthToken } from '@/utils/cookie';
 
 export const getApiBaseUrl = (): string => {
   if (typeof window !== 'undefined') {
-    const isVercelOrRemote =
-      window.location.hostname.includes('vercel.app') ||
-      (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1');
-
-    if (isVercelOrRemote) {
-      return (
-        process.env.NEXT_PUBLIC_BASE_API?.startsWith('https')
-          ? process.env.NEXT_PUBLIC_BASE_API
-          : 'https://smart-parking-backend-omega.vercel.app/api/v1'
-      );
+    // On the browser: use relative URL so Next.js rewrites proxy to the backend
+    // This works both locally (via next dev proxy) and on Vercel
+    const isLocal =
+      window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (!isLocal) {
+      return '/api/v1';
     }
   }
-
+  // Server-side or local dev: use env var or fallback
   return process.env.NEXT_PUBLIC_BASE_API || 'http://localhost:5000/api/v1';
 };
 
@@ -24,7 +20,9 @@ export const API_BASE_URL = getApiBaseUrl();
 let isRedirecting = false;
 
 const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: typeof window === 'undefined'
+    ? (process.env.NEXT_PUBLIC_BASE_API || 'http://localhost:5000/api/v1')
+    : '/api/v1',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -34,8 +32,8 @@ const apiClient = axios.create({
 // Request Interceptor: Attach dynamic BaseURL & Bearer Token from Cookie
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    config.baseURL = getApiBaseUrl();
     if (typeof window !== 'undefined') {
+      config.baseURL = getApiBaseUrl();
       const token = getAuthToken();
       if (token && !config.headers.Authorization) {
         config.headers.Authorization = `Bearer ${token}`;
