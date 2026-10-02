@@ -85,7 +85,10 @@ export const ReviewService = {
   },
 
   // Update an existing review
-  updateReview: async (reviewId: string, payload: IUpdateReviewPayload): Promise<IReviewResponse> => {
+  updateReview: async (
+    reviewId: string,
+    payload: IUpdateReviewPayload,
+  ): Promise<IReviewResponse> => {
     return apiClient.patch(`/reviews/${reviewId}`, payload);
   },
 

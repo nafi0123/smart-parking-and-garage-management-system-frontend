@@ -234,9 +234,7 @@ export default function FavoriteTable({
           : a.pricePerHour - b.pricePerHour;
       }
       if (sortBy === 'totalSlots') {
-        return sortOrder === 'desc'
-          ? b.totalSlots - a.totalSlots
-          : a.totalSlots - b.totalSlots;
+        return sortOrder === 'desc' ? b.totalSlots - a.totalSlots : a.totalSlots - b.totalSlots;
       }
       if (sortBy === 'averageRating') {
         return sortOrder === 'desc'
@@ -244,9 +242,7 @@ export default function FavoriteTable({
           : (a.averageRating || 0) - (b.averageRating || 0);
       }
       if (sortBy === 'name') {
-        return sortOrder === 'desc'
-          ? b.name.localeCompare(a.name)
-          : a.name.localeCompare(b.name);
+        return sortOrder === 'desc' ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name);
       }
       return 0;
     });
@@ -269,7 +265,9 @@ export default function FavoriteTable({
   const availableSlots = rawFavorites.reduce((sum, g) => sum + (g.availableSlots || 0), 0);
   const avgPrice =
     rawFavorites.length > 0
-      ? Math.round(rawFavorites.reduce((sum, g) => sum + (g.pricePerHour || 0), 0) / rawFavorites.length)
+      ? Math.round(
+          rawFavorites.reduce((sum, g) => sum + (g.pricePerHour || 0), 0) / rawFavorites.length,
+        )
       : 0;
 
   const errorMessage = queryError instanceof Error ? queryError.message : null;
@@ -420,12 +418,7 @@ export default function FavoriteTable({
                 href="/garages"
                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-gradient-to-r from-[#0f2a6b] to-[#1e40af] hover:from-[#0b1f50] hover:to-[#1e3a8a] text-white text-xs font-bold shadow-md hover:shadow-lg transition-all active:scale-95 cursor-pointer"
               >
-                <svg
-                  className="w-3.5 h-3.5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"

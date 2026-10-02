@@ -18,12 +18,7 @@ interface IReviewModalProps {
   onSuccess?: () => void;
 }
 
-export default function ReviewModal({
-  isOpen,
-  onClose,
-  booking,
-  onSuccess,
-}: IReviewModalProps) {
+export default function ReviewModal({ isOpen, onClose, booking, onSuccess }: IReviewModalProps) {
   const [rating, setRating] = useState<number>(5);
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [comment, setComment] = useState('');
@@ -158,7 +153,9 @@ export default function ReviewModal({
 
             <div className="text-[11px] text-[var(--sub)] flex items-center gap-1.5 truncate">
               <HiOutlineLocationMarker className="w-3.5 h-3.5 text-red-500 shrink-0" />
-              <span>{booking.garage?.address || booking.garage?.location || 'Dhaka, Bangladesh'}</span>
+              <span>
+                {booking.garage?.address || booking.garage?.location || 'Dhaka, Bangladesh'}
+              </span>
             </div>
 
             <div className="flex items-center justify-between pt-1 border-t border-slate-200/60 dark:border-slate-800/60 text-[10px] text-[var(--sub)] font-mono">

@@ -3,9 +3,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { Suspense, useState, useEffect, useMemo } from 'react';
-import { FaHeart, FaLocationDot, FaRegHeart, FaStar } from 'react-icons/fa6';
+import { useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useMemo, useState } from 'react';
+import {
+  FaCompass,
+  FaHeart,
+  FaLocationCrosshairs,
+  FaLocationDot,
+  FaRegHeart,
+  FaStar,
+} from 'react-icons/fa6';
 import Container from '@/components/Container';
 import { FavoriteService } from '@/services/favorite';
 import { GarageService, type IGetAllGaragesParams } from '@/services/garage';
@@ -21,6 +28,13 @@ const POPULAR_ZONES = [
   'Mirpur',
   'Motijheel',
   'Mohakhali',
+];
+
+const RADIUS_PRESETS = [
+  { label: '≤ 2 km', value: 2 },
+  { label: '≤ 5 km', value: 5 },
+  { label: '≤ 10 km', value: 10 },
+  { label: '≤ 20 km', value: 20 },
 ];
 
 const PRICE_PRESETS = [
@@ -39,7 +53,6 @@ const RATING_OPTIONS = [
 ];
 
 function GaragesPageContent() {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
 
@@ -59,6 +72,14 @@ function GaragesPageContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  // Live GPS Nearby Mode State
+  const [isNearbyActive, setIsNearbyActive] = useState(false);
+  const [userCoords, setUserCoords] = useState<{ latitude: number; longitude: number } | null>(
+    null,
+  );
+  const [nearbyRadius, setNearbyRadius] = useState<number>(10);
+  const [isLocating, setIsLocating] = useState(false);
+
   // Mobile sidebar visibility
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
@@ -73,6 +94,47 @@ function GaragesPageContent() {
     if (urlMaxPrice) setMaxPrice(urlMaxPrice);
     if (urlOnlyAvailable) setOnlyAvailable(true);
   }, [urlSearchTerm, urlMaxPrice, urlOnlyAvailable]);
+
+  // Request browser GPS location
+  const handleLocateMe = () => {
+    if (typeof window === 'undefined' || !navigator.geolocation) {
+      Alert.error('Geolocation Unsupported', 'Your browser does not support GPS location.');
+      return;
+    }
+
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserCoords({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+        });
+        setIsNearbyActive(true);
+        setIsLocating(false);
+        setCurrentPage(1);
+        Alert.toastSuccess('GPS Location acquired! Showing nearest parking garages.');
+      },
+      (err) => {
+        setIsLocating(false);
+        console.warn('Geolocation error:', err);
+        Alert.info(
+          'Location Permission Needed',
+          'Please allow location permission in your browser to find parking spots near you.',
+        );
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000,
+      },
+    );
+  };
+
+  const handleExitNearby = () => {
+    setIsNearbyActive(false);
+    setUserCoords(null);
+    setCurrentPage(1);
+  };
 
   // Query user favorites when logged in
   const { data: favoritesResponse } = useQuery({
@@ -104,7 +166,7 @@ function GaragesPageContent() {
     },
   });
 
-  // Construct query params (24 items per page)
+  // Construct query params (24 items per page) for standard search
   const queryParams: IGetAllGaragesParams = {
     page: currentPage,
     limit: 24,
@@ -112,14 +174,13 @@ function GaragesPageContent() {
     sortOrder,
   };
 
-  const effectiveSearch =
-    searchTerm.trim() || (selectedZone !== 'All Zones' ? selectedZone : '');
+  const effectiveSearch = searchTerm.trim() || (selectedZone !== 'All Zones' ? selectedZone : '');
   if (effectiveSearch) {
     queryParams.searchTerm = effectiveSearch;
   }
 
   if (maxPrice && !Number.isNaN(Number(maxPrice))) {
-    queryParams.maxPrice = Number(maxPrice);
+    queryParams.minPrice = Number(maxPrice);
   }
 
   if (onlyAvailable) {
@@ -138,17 +199,43 @@ function GaragesPageContent() {
     error,
     refetch,
   } = useQuery({
-    queryKey: ['garages', queryParams],
-    queryFn: () => GarageService.getAllGarages(queryParams),
+    queryKey:
+      isNearbyActive && userCoords
+        ? [
+            'garages-nearby',
+            userCoords.latitude,
+            userCoords.longitude,
+            nearbyRadius,
+            maxPrice,
+            onlyAvailable,
+            minRating,
+          ]
+        : ['garages', queryParams],
+    queryFn: async () => {
+      if (isNearbyActive && userCoords) {
+        return GarageService.getNearbyGarages({
+          latitude: userCoords.latitude,
+          longitude: userCoords.longitude,
+          radius: nearbyRadius,
+          minPrice: maxPrice ? Number(maxPrice) : undefined,
+          maxPrice: maxPrice ? Number(maxPrice) : undefined,
+          onlyAvailable: onlyAvailable ? true : undefined,
+          minRating: minRating ? Number(minRating) : undefined,
+          limit: 50,
+        });
+      }
+      return GarageService.getAllGarages(queryParams);
+    },
     placeholderData: (previousData) => previousData,
   });
 
   const garages = garagesResponse?.data || [];
   const totalCount = garagesResponse?.meta?.total ?? garages.length;
-  const totalPages = garagesResponse?.meta?.totalPage ?? 1;
+  const totalPages = isNearbyActive ? 1 : (garagesResponse?.meta?.totalPage ?? 1);
 
   // Active filters count for badge
   const activeFiltersCount = [
+    isNearbyActive,
     searchTerm.trim(),
     selectedZone !== 'All Zones',
     maxPrice,
@@ -164,6 +251,8 @@ function GaragesPageContent() {
     setMinRating('');
     setSortBy('createdAt');
     setSortOrder('desc');
+    setIsNearbyActive(false);
+    setUserCoords(null);
     setCurrentPage(1);
   };
 
@@ -191,15 +280,48 @@ function GaragesPageContent() {
               Explore Parking Garages
             </h1>
             <p className="text-xs sm:text-sm text-[var(--sub)] max-w-2xl">
-              Filter by zone, price, live bay availability, and user rating. Click anywhere on a card to view live occupancy and book.
+              Filter by GPS proximity, city zone, price, live bay availability, and user rating.
+              Click anywhere on a card to view live occupancy and book.
             </p>
           </div>
 
-          {/* Quick Counter Badge */}
-          <div className="flex items-center gap-3">
+          {/* Quick Action & Counter Badges */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* Quick GPS Near Me Header Button */}
+            {!isNearbyActive ? (
+              <button
+                type="button"
+                onClick={handleLocateMe}
+                disabled={isLocating}
+                className="inline-flex items-center gap-1.5 rounded-md bg-[#0f2a6b] hover:bg-[#1e40af] text-white px-3.5 py-2 text-xs font-semibold shadow-2xs transition-all cursor-pointer disabled:opacity-50"
+              >
+                {isLocating ? (
+                  <>
+                    <span className="h-3.5 w-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Locating GPS...</span>
+                  </>
+                ) : (
+                  <>
+                    <FaLocationCrosshairs className="w-3.5 h-3.5 text-cyan-300" />
+                    <span>Find Near Me</span>
+                  </>
+                )}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleExitNearby}
+                className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 px-3.5 py-2 text-xs font-semibold shadow-2xs hover:bg-emerald-500/25 transition-all cursor-pointer"
+              >
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+                <span>GPS Radar Active (≤ {nearbyRadius}km) · ✕ Exit</span>
+              </button>
+            )}
+
             <div className="rounded-md border border-[var(--line)] bg-[var(--card)] px-3.5 py-2 text-xs font-semibold text-[var(--ink)] shadow-2xs">
               <span className="text-[var(--sub)]">Showing: </span>
-              <span className="text-blue-600 dark:text-blue-400 font-bold">{totalCount}</span> Garages
+              <span className="text-blue-600 dark:text-blue-400 font-bold">{totalCount}</span>{' '}
+              Garages
             </div>
           </div>
         </div>
@@ -251,9 +373,128 @@ function GaragesPageContent() {
               )}
             </div>
 
-            {/* 1. Keyword / Location Search Input */}
+            {/* 1. Live GPS Radar Box (Nearby Me) */}
+            <div
+              className={`p-3.5 rounded-md border transition-all ${
+                isNearbyActive
+                  ? 'bg-blue-500/10 border-blue-500/40 shadow-xs'
+                  : 'bg-[var(--bg)]/80 border-[var(--line)]'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-[var(--ink)] flex items-center gap-1.5">
+                  <FaLocationCrosshairs
+                    className={`w-3.5 h-3.5 ${
+                      isNearbyActive
+                        ? 'text-blue-600 dark:text-blue-400 animate-spin'
+                        : 'text-slate-400'
+                    }`}
+                  />
+                  Live GPS Radar
+                </span>
+                {isNearbyActive && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Nearby Active
+                  </span>
+                )}
+              </div>
+
+              {!isNearbyActive ? (
+                <div className="space-y-1.5">
+                  <p className="text-[11px] text-[var(--sub)]">
+                    Use your live GPS coordinates to locate the closest available smart garages
+                    within your chosen radius.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleLocateMe}
+                    disabled={isLocating}
+                    className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded bg-[#0f2a6b] hover:bg-[#1e40af] text-white text-xs font-semibold shadow-xs transition-all cursor-pointer disabled:opacity-50"
+                  >
+                    {isLocating ? (
+                      <>
+                        <span className="h-3.5 w-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>Acquiring GPS...</span>
+                      </>
+                    ) : (
+                      <>
+                        <FaCompass className="w-3.5 h-3.5 text-cyan-300" />
+                        <span>Find Parking Near Me</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="text-[var(--sub)] font-medium">Search Radius:</span>
+                    <span className="font-bold text-blue-600 dark:text-blue-400 font-mono">
+                      ≤ {nearbyRadius} km
+                    </span>
+                  </div>
+
+                  {/* Radius Preset Chips */}
+                  <div className="grid grid-cols-4 gap-1">
+                    {RADIUS_PRESETS.map((preset) => (
+                      <button
+                        key={preset.value}
+                        type="button"
+                        onClick={() => {
+                          setNearbyRadius(preset.value);
+                          setCurrentPage(1);
+                        }}
+                        className={`py-1 rounded text-[10px] font-bold transition-all cursor-pointer text-center ${
+                          nearbyRadius === preset.value
+                            ? 'bg-[#0f2a6b] text-white shadow-xs'
+                            : 'border border-[var(--line)] bg-[var(--card)] text-[var(--sub)] hover:text-[var(--ink)] hover:bg-slate-100 dark:hover:bg-slate-800'
+                        }`}
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Radius Slider */}
+                  <input
+                    type="range"
+                    min="1"
+                    max="30"
+                    step="1"
+                    value={nearbyRadius}
+                    onChange={(e) => {
+                      setNearbyRadius(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="w-full accent-[#0f2a6b] cursor-pointer"
+                  />
+
+                  {/* GPS Coordinates readout */}
+                  {userCoords && (
+                    <div className="text-[10px] text-[var(--sub)] flex items-center justify-between font-mono bg-[var(--card)] px-2 py-1 rounded border border-[var(--line)]">
+                      <span>Lat: {userCoords.latitude.toFixed(4)}</span>
+                      <span>Lon: {userCoords.longitude.toFixed(4)}</span>
+                    </div>
+                  )}
+
+                  {/* Exit GPS Radar Button */}
+                  <button
+                    type="button"
+                    onClick={handleExitNearby}
+                    className="w-full py-1.5 rounded text-[11px] font-semibold text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                  >
+                    ✕ Exit GPS Radar Mode
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* 2. Keyword / Location Search Input */}
             <div className="space-y-1.5">
-              <label htmlFor="filter-search" className="text-xs font-semibold text-[var(--ink)] block">
+              <label
+                htmlFor="filter-search"
+                className="text-xs font-semibold text-[var(--ink)] block"
+              >
                 Search by Name or Area
               </label>
               <div className="relative">
@@ -283,7 +524,7 @@ function GaragesPageContent() {
               </div>
             </div>
 
-            {/* 2. Availability Toggle */}
+            {/* 3. Availability Toggle */}
             <div className="space-y-2 pt-2 border-t border-[var(--line)]">
               <span className="text-xs font-semibold text-[var(--ink)] block">
                 Live Bay Availability
@@ -305,7 +546,7 @@ function GaragesPageContent() {
               </label>
             </div>
 
-            {/* 3. Popular City Zones / Areas */}
+            {/* 4. Popular City Zones / Areas */}
             <div className="space-y-2 pt-2 border-t border-[var(--line)]">
               <span className="text-xs font-semibold text-[var(--ink)] block">
                 Popular City Hubs
@@ -335,7 +576,7 @@ function GaragesPageContent() {
               </div>
             </div>
 
-            {/* 4. Maximum Hourly Tariff Filter */}
+            {/* 5. Maximum Hourly Tariff Filter */}
             <div className="space-y-2.5 pt-2 border-t border-[var(--line)]">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-[var(--ink)]">Max Tariff / Hour</span>
@@ -380,7 +621,7 @@ function GaragesPageContent() {
               </div>
             </div>
 
-            {/* 5. Driver Rating Filter */}
+            {/* 6. Driver Rating Filter */}
             <div className="space-y-2 pt-2 border-t border-[var(--line)]">
               <span className="text-xs font-semibold text-[var(--ink)] block">
                 Minimum Driver Rating
@@ -420,35 +661,88 @@ function GaragesPageContent() {
 
           {/* ================= RIGHT GARAGES CONTENT AREA ================= */}
           <main className="lg:col-span-9 space-y-6">
+            {/* GPS Nearby Banner Alert if Active */}
+            {isNearbyActive && (
+              <div className="p-3.5 rounded-md bg-gradient-to-r from-blue-900/30 via-blue-800/20 to-cyan-900/30 border border-blue-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[var(--ink)] shadow-xs">
+                <div className="flex items-center gap-2.5">
+                  <div className="h-8 w-8 rounded-full bg-blue-500/20 border border-blue-500/40 flex items-center justify-center shrink-0 text-blue-500 dark:text-blue-400">
+                    <FaLocationCrosshairs className="w-4 h-4 animate-spin" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1.5">
+                      <span>Live GPS Proximity Radar Active</span>
+                      <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+                    </p>
+                    <p className="text-[11px] text-[var(--sub)]">
+                      Showing parking facilities within <strong>{nearbyRadius} km</strong> of your
+                      coordinates, sorted from nearest to furthest.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <select
+                    value={nearbyRadius}
+                    onChange={(e) => {
+                      setNearbyRadius(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="bg-[var(--card)] border border-[var(--line)] text-[var(--ink)] text-xs font-semibold rounded px-2.5 py-1.5 focus:outline-none cursor-pointer"
+                  >
+                    <option value={2}>Radius: ≤ 2 km</option>
+                    <option value={5}>Radius: ≤ 5 km</option>
+                    <option value={10}>Radius: ≤ 10 km</option>
+                    <option value={20}>Radius: ≤ 20 km</option>
+                    <option value={30}>Radius: ≤ 30 km</option>
+                  </select>
+                  <button
+                    type="button"
+                    onClick={handleExitNearby}
+                    className="rounded bg-[var(--card)] border border-[var(--line)] px-2.5 py-1.5 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                  >
+                    ✕ Exit
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Top Sort & Results Bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-md border border-[var(--line)] bg-[var(--card)] shadow-2xs">
               <div className="text-xs font-semibold text-[var(--ink)] flex items-center gap-1.5">
                 <span>📍 Available Parking Hubs</span>
                 <span className="text-[var(--sub)] font-normal">
-                  ({totalCount} {totalCount === 1 ? 'facility' : 'facilities'} found)
+                  ({totalCount} {totalCount === 1 ? 'facility' : 'facilities'}{' '}
+                  {isNearbyActive ? 'within radius' : 'found'})
                 </span>
               </div>
 
-              {/* Sort Dropdown */}
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-[var(--sub)] shrink-0">Sort By:</span>
-                <select
-                  value={`${sortBy}-${sortOrder}`}
-                  onChange={(e) => {
-                    const [sb, so] = e.target.value.split('-');
-                    setSortBy(sb);
-                    setSortOrder(so as 'asc' | 'desc');
-                    setCurrentPage(1);
-                  }}
-                  className="bg-[var(--bg)] border border-[var(--line)] text-[var(--ink)] text-xs font-medium rounded px-2.5 py-1.5 focus:outline-none cursor-pointer"
-                >
-                  <option value="createdAt-desc">Newest Added</option>
-                  <option value="pricePerHour-asc">Price: Low to High</option>
-                  <option value="pricePerHour-desc">Price: High to Low</option>
-                  <option value="availableSlots-desc">Most Available Slots</option>
-                  <option value="averageRating-desc">Highest Rated</option>
-                </select>
-              </div>
+              {/* Sort Dropdown / Info */}
+              {!isNearbyActive ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-[var(--sub)] shrink-0">Sort By:</span>
+                  <select
+                    value={`${sortBy}-${sortOrder}`}
+                    onChange={(e) => {
+                      const [sb, so] = e.target.value.split('-');
+                      setSortBy(sb);
+                      setSortOrder(so as 'asc' | 'desc');
+                      setCurrentPage(1);
+                    }}
+                    className="bg-[var(--bg)] border border-[var(--line)] text-[var(--ink)] text-xs font-medium rounded px-2.5 py-1.5 focus:outline-none cursor-pointer"
+                  >
+                    <option value="createdAt-desc">Newest Added</option>
+                    <option value="pricePerHour-asc">Price: Low to High</option>
+                    <option value="pricePerHour-desc">Price: High to Low</option>
+                    <option value="availableSlots-desc">Most Available Slots</option>
+                    <option value="averageRating-desc">Highest Rated</option>
+                  </select>
+                </div>
+              ) : (
+                <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-2.5 py-1 rounded">
+                  <span>🧭 Order:</span>
+                  <span className="font-bold">Closest Distance First</span>
+                </div>
+              )}
             </div>
 
             {/* Loading Skeletons */}
@@ -485,19 +779,46 @@ function GaragesPageContent() {
               /* Empty State */
               <div className="rounded-md border border-[var(--line)] bg-[var(--card)] p-12 text-center space-y-3 shadow-xs">
                 <div className="mx-auto w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 text-xl font-bold">
-                  🅿
+                  {isNearbyActive ? '📍' : '🅿'}
                 </div>
-                <h3 className="text-base font-bold text-[var(--ink)]">No Garages Found</h3>
+                <h3 className="text-base font-bold text-[var(--ink)]">
+                  {isNearbyActive
+                    ? `No Garages Found within ${nearbyRadius} km`
+                    : 'No Garages Found'}
+                </h3>
                 <p className="text-xs text-[var(--sub)] max-w-sm mx-auto">
-                  We couldn&apos;t find any smart garages matching your selected filters or search criteria.
+                  {isNearbyActive
+                    ? `We couldn't find any parking facilities within ${nearbyRadius} km of your GPS location. Try increasing the search radius to 20 km or 30 km.`
+                    : "We couldn't find any smart garages matching your selected filters or search criteria."}
                 </p>
-                <button
-                  type="button"
-                  onClick={handleResetFilters}
-                  className="rounded-md bg-[#0f2a6b] px-4 py-2 text-xs font-semibold text-white hover:bg-[#1e40af] transition-colors cursor-pointer"
-                >
-                  Reset All Filters
-                </button>
+                <div className="flex justify-center gap-2 pt-2">
+                  {isNearbyActive ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setNearbyRadius(20)}
+                        className="rounded-md bg-[#0f2a6b] px-4 py-2 text-xs font-semibold text-white hover:bg-[#1e40af] transition-colors cursor-pointer"
+                      >
+                        Expand to 20 km
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleExitNearby}
+                        className="rounded-md border border-[var(--line)] bg-[var(--card)] px-4 py-2 text-xs font-semibold text-[var(--ink)] hover:bg-[var(--bg)] transition-colors cursor-pointer"
+                      >
+                        Browse All Garages
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleResetFilters}
+                      className="rounded-md bg-[#0f2a6b] px-4 py-2 text-xs font-semibold text-white hover:bg-[#1e40af] transition-colors cursor-pointer"
+                    >
+                      Reset All Filters
+                    </button>
+                  )}
+                </div>
               </div>
             ) : (
               /* 100% Clickable Garage Cards Grid */
@@ -539,7 +860,7 @@ function GaragesPageContent() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
 
                         {/* Live Availability Status Pill on Top Left */}
-                        <div className="absolute top-2.5 left-2.5">
+                        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 items-start">
                           <span
                             className={`inline-flex items-center gap-1.5 rounded px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider backdrop-blur-md shadow-xs ${
                               isAvailable
@@ -554,6 +875,16 @@ function GaragesPageContent() {
                             />
                             {isAvailable ? `${garage.availableSlots} Slots Free` : 'Full'}
                           </span>
+
+                          {/* Distance Badge on Card Top Left if Available */}
+                          {garage.distanceKm !== undefined && (
+                            <span className="inline-flex items-center gap-1 rounded bg-blue-950/90 text-cyan-300 border border-cyan-400/50 px-2 py-0.5 text-[10px] font-bold backdrop-blur-md shadow-xs">
+                              <FaLocationCrosshairs className="w-2.5 h-2.5 text-cyan-300" />
+                              {garage.distanceKm < 1
+                                ? `${Math.round(garage.distanceKm * 1000)}m away`
+                                : `${garage.distanceKm.toFixed(1)} km away`}
+                            </span>
+                          )}
                         </div>
 
                         {/* Heart Bookmark Button on Top Right */}
@@ -627,7 +958,8 @@ function GaragesPageContent() {
                           <div className="flex items-center justify-between text-[11px] text-[var(--sub)] font-medium">
                             <span>Occupancy</span>
                             <span className="font-semibold text-[var(--ink)]">
-                              {garage.totalSlots - garage.availableSlots} / {garage.totalSlots} slots
+                              {garage.totalSlots - garage.availableSlots} / {garage.totalSlots}{' '}
+                              slots
                             </span>
                           </div>
                           <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
@@ -636,8 +968,8 @@ function GaragesPageContent() {
                                 occupancyPercent > 80
                                   ? 'bg-rose-500'
                                   : occupancyPercent > 50
-                                  ? 'bg-amber-500'
-                                  : 'bg-emerald-500'
+                                    ? 'bg-amber-500'
+                                    : 'bg-emerald-500'
                               }`}
                               style={{ width: `${occupancyPercent}%` }}
                             />
@@ -653,8 +985,12 @@ function GaragesPageContent() {
                                 : 'bg-rose-800/80 text-rose-200 border border-rose-700/50'
                             }`}
                           >
-                            <span>{isAvailable ? 'View Details & Book' : 'Fully Occupied (0 Free)'}</span>
-                            <span className="text-xs transition-transform group-hover:translate-x-1">→</span>
+                            <span>
+                              {isAvailable ? 'View Details & Book' : 'Fully Occupied (0 Free)'}
+                            </span>
+                            <span className="text-xs transition-transform group-hover:translate-x-1">
+                              →
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -664,8 +1000,8 @@ function GaragesPageContent() {
               </div>
             )}
 
-            {/* Enhanced Pagination Controls (24 items/page) */}
-            {totalPages > 1 && (
+            {/* Enhanced Pagination Controls (24 items/page) - Hidden in Nearby Mode */}
+            {!isNearbyActive && totalPages > 1 && (
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-[var(--line)]">
                 <div className="text-xs text-[var(--sub)]">
                   Showing{' '}
@@ -758,5 +1094,3 @@ export default function GaragesPage() {
     </Suspense>
   );
 }
-
-

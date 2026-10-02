@@ -89,9 +89,7 @@ export default function ReviewEditModal({
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200/90 dark:border-slate-800 bg-[var(--bg)]/40">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold text-[var(--ink)]">
-                Edit Your Review & Rating
-              </h3>
+              <h3 className="text-base font-bold text-[var(--ink)]">Edit Your Review & Rating</h3>
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
                 Update Feedback
@@ -133,16 +131,40 @@ export default function ReviewEditModal({
             </div>
 
             <div className="text-[11px] text-[var(--sub)] flex items-center gap-1.5 truncate">
-              <svg className="w-3.5 h-3.5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              <svg
+                className="w-3.5 h-3.5 text-blue-500 shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                />
               </svg>
-              <span>{review.garage?.address || review.garage?.location || 'Dhaka, Bangladesh'}</span>
+              <span>
+                {review.garage?.address || review.garage?.location || 'Dhaka, Bangladesh'}
+              </span>
             </div>
 
             <div className="flex items-center justify-between pt-1 border-t border-slate-200/60 dark:border-slate-800/60 text-[10px] text-[var(--sub)] font-mono">
               <span>Review ID: #{review.id.slice(0, 8).toUpperCase()}</span>
-              <span>Submitted: {new Date(review.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+              <span>
+                Submitted:{' '}
+                {new Date(review.createdAt).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
+              </span>
             </div>
           </div>
 
@@ -167,7 +189,9 @@ export default function ReviewEditModal({
                   >
                     <svg
                       className={`w-6 h-6 transition-colors ${
-                        isActive ? 'text-amber-400 fill-amber-400 drop-shadow-sm' : 'text-slate-300 dark:text-slate-700 fill-slate-300 dark:fill-slate-700'
+                        isActive
+                          ? 'text-amber-400 fill-amber-400 drop-shadow-sm'
+                          : 'text-slate-300 dark:text-slate-700 fill-slate-300 dark:fill-slate-700'
                       }`}
                       viewBox="0 0 20 20"
                     >
@@ -186,7 +210,10 @@ export default function ReviewEditModal({
           {/* Comment / Review Textarea */}
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <label htmlFor="review-edit-comment" className="block font-semibold text-[var(--ink)]">
+              <label
+                htmlFor="review-edit-comment"
+                className="block font-semibold text-[var(--ink)]"
+              >
                 Feedback & Experience
               </label>
               <span className="text-[10px] text-[var(--sub)]">Optional</span>
@@ -204,8 +231,18 @@ export default function ReviewEditModal({
           {/* Modal Footer */}
           <div className="pt-3 border-t border-slate-200/90 dark:border-slate-800 flex items-center justify-between">
             <div className="text-[11px] text-[var(--sub)] flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+              <svg
+                className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
               <span>Changes reflect immediately</span>
             </div>
@@ -232,8 +269,18 @@ export default function ReviewEditModal({
                   </>
                 ) : (
                   <>
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-3.5 h-3.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2.5}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     <span>Save Changes</span>
                   </>

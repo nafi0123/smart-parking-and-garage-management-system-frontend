@@ -22,6 +22,8 @@ export interface IBookingGarage {
   name: string;
   address: string;
   location?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
   pricePerHour: number;
   images?: string[];
   owner?: {

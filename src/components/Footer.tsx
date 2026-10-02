@@ -33,7 +33,8 @@ export default function Footer() {
                 Get Real-Time Parking & Tariff Updates
               </h3>
               <p className="text-xs sm:text-sm text-slate-400">
-                Subscribe to receive vacancy notifications, peak-hour forecasts, and exclusive parking discounts.
+                Subscribe to receive vacancy notifications, peak-hour forecasts, and exclusive
+                parking discounts.
               </p>
             </div>
 
@@ -90,7 +91,9 @@ export default function Footer() {
               </Link>
 
               <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm">
-                Next-generation IoT-powered smart parking and multi-level garage management system. Enabling instant space reservation, robotic automation, and real-time telemetry across city hubs.
+                Next-generation IoT-powered smart parking and multi-level garage management system.
+                Enabling instant space reservation, robotic automation, and real-time telemetry
+                across city hubs.
               </p>
 
               {/* Status Badge */}
@@ -163,7 +166,10 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/garages?onlyAvailable=true" className="hover:text-cyan-400 transition-colors">
+                  <Link
+                    href="/garages?onlyAvailable=true"
+                    className="hover:text-cyan-400 transition-colors"
+                  >
                     Available Parking Bays
                   </Link>
                 </li>
@@ -173,7 +179,10 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/garages?sortBy=pricePerHour&sortOrder=asc" className="hover:text-cyan-400 transition-colors">
+                  <Link
+                    href="/garages?sortBy=pricePerHour&sortOrder=asc"
+                    className="hover:text-cyan-400 transition-colors"
+                  >
                     Hourly & Daily Rates
                   </Link>
                 </li>
@@ -264,8 +273,17 @@ export default function Footer() {
             {/* Security & Feature Badges */}
             <div className="flex flex-wrap items-center justify-center gap-3 text-[11px]">
               <span className="inline-flex items-center gap-1 rounded bg-slate-900 border border-slate-800 px-2 py-0.5 text-slate-300">
-                <svg className="h-3 w-3 text-emerald-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                  <path fillRule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z" clipRule="evenodd" />
+                <svg
+                  className="h-3 w-3 text-emerald-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  aria-hidden="true"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 SSL 256-Bit Encrypted
               </span>

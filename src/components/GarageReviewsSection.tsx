@@ -148,11 +148,7 @@ export default function GarageReviewsSection({
           <div className="flex items-center gap-1 text-amber-400 text-lg">
             {[1, 2, 3, 4, 5].map((star) => (
               <span key={star}>
-                {averageRating >= star
-                  ? '★'
-                  : averageRating >= star - 0.5
-                  ? '★'
-                  : '☆'}
+                {averageRating >= star ? '★' : averageRating >= star - 0.5 ? '★' : '☆'}
               </span>
             ))}
           </div>
@@ -351,7 +347,8 @@ export default function GarageReviewsSection({
           <div className="space-y-1">
             <h3 className="text-sm font-bold text-[var(--ink)]">No Reviews Yet for this Garage</h3>
             <p className="text-xs text-[var(--sub)] max-w-sm mx-auto leading-relaxed">
-              Be among the first drivers to park here and share your verified experience regarding security, accessibility, and service!
+              Be among the first drivers to park here and share your verified experience regarding
+              security, accessibility, and service!
             </p>
           </div>
 

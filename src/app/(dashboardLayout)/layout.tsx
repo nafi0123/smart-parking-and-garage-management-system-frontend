@@ -6,7 +6,7 @@ import type React from 'react';
 import { useEffect, useState } from 'react';
 import { FaRegHeart, FaRegStar } from 'react-icons/fa6';
 import { FiLogOut } from 'react-icons/fi';
-import { LuCalendarCheck, LuInbox, LuLayoutDashboard, LuUsers } from 'react-icons/lu';
+import { LuCalendarCheck, LuCar, LuInbox, LuLayoutDashboard, LuUsers } from 'react-icons/lu';
 import { RiParkingBoxLine } from 'react-icons/ri';
 import { AuthService } from '@/services/auth';
 import Alert from '@/utils/alert';
@@ -121,6 +121,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <LuCalendarCheck className="w-4 h-4 shrink-0" /> My Bookings
           </Link>
 
+          {/* Registered Vehicles (All Roles) */}
+          <Link
+            href="/dashboard/vehicles"
+            className={pathname.startsWith('/dashboard/vehicles') ? 'active' : ''}
+          >
+            <LuCar className="w-4 h-4 shrink-0" /> My Vehicles
+          </Link>
+
           {/* Favorite Garages (All Roles) */}
           <Link
             href="/dashboard/favorites"
@@ -204,35 +212,39 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               {pathname === '/dashboard/users'
                 ? 'User Management'
                 : pathname.startsWith('/dashboard/manager-bookings')
-                ? 'Incoming Garage Bookings'
-                : pathname.startsWith('/dashboard/favorites')
-                ? 'My Favorite Garages'
-                : pathname.startsWith('/dashboard/my-reviews') ||
-                  pathname.startsWith('/dashboard/reviews')
-                ? 'My Reviews & Ratings'
-                : pathname.startsWith('/dashboard/my-bookings') ||
-                  pathname.startsWith('/dashboard/bookings')
-                ? 'My Reservations & Bookings'
-                : pathname.startsWith('/dashboard/garages')
-                  ? 'Garage & Facility Management'
-                  : 'Overview'}
+                  ? 'Incoming Garage Bookings'
+                  : pathname.startsWith('/dashboard/vehicles')
+                    ? 'My Registered Vehicles'
+                    : pathname.startsWith('/dashboard/favorites')
+                      ? 'My Favorite Garages'
+                      : pathname.startsWith('/dashboard/my-reviews') ||
+                          pathname.startsWith('/dashboard/reviews')
+                        ? 'My Reviews & Ratings'
+                        : pathname.startsWith('/dashboard/my-bookings') ||
+                            pathname.startsWith('/dashboard/bookings')
+                          ? 'My Reservations & Bookings'
+                          : pathname.startsWith('/dashboard/garages')
+                            ? 'Garage & Facility Management'
+                            : 'Overview'}
             </h1>
             <p className="text-xs text-[var(--sub)] mt-0.5">
               {pathname === '/dashboard/users'
                 ? 'Central Parking Network — Registered Users & Access Control'
                 : pathname.startsWith('/dashboard/manager-bookings')
-                ? 'Central Parking Network — Driver Parking Sessions & Slot Control'
-                : pathname.startsWith('/dashboard/favorites')
-                ? 'Central Parking Network — Saved Bookmarks & Quick Access Garages'
-                : pathname.startsWith('/dashboard/my-reviews') ||
-                  pathname.startsWith('/dashboard/reviews')
-                ? 'Central Parking Network — Your Verified Reviews, Star Ratings & Garage Feedback'
-                : pathname.startsWith('/dashboard/my-bookings') ||
-                  pathname.startsWith('/dashboard/bookings')
-                ? 'Central Parking Network — Spot Reservations, SSLCommerz Payments & Invoices'
-                : pathname.startsWith('/dashboard/garages')
-                  ? 'Central Parking Network — Registered Facilities, Slots & Rates'
-                  : 'Central Plaza Parking — Live Status'}
+                  ? 'Central Parking Network — Driver Parking Sessions & Slot Control'
+                  : pathname.startsWith('/dashboard/vehicles')
+                    ? 'Central Parking Network — Motor Vehicle License Plates & 1-Click Spot Defaults'
+                    : pathname.startsWith('/dashboard/favorites')
+                      ? 'Central Parking Network — Saved Bookmarks & Quick Access Garages'
+                      : pathname.startsWith('/dashboard/my-reviews') ||
+                          pathname.startsWith('/dashboard/reviews')
+                        ? 'Central Parking Network — Your Verified Reviews, Star Ratings & Garage Feedback'
+                        : pathname.startsWith('/dashboard/my-bookings') ||
+                            pathname.startsWith('/dashboard/bookings')
+                          ? 'Central Parking Network — Spot Reservations, SSLCommerz Payments & Invoices'
+                          : pathname.startsWith('/dashboard/garages')
+                            ? 'Central Parking Network — Registered Facilities, Slots & Rates'
+                            : 'Central Plaza Parking — Live Status'}
             </p>
           </div>
 

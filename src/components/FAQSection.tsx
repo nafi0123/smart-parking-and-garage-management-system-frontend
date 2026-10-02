@@ -86,9 +86,7 @@ export default function FAQSection() {
   const [openIds, setOpenIds] = useState<string[]>([]); // Closed by default
 
   const toggleFAQ = (id: string) => {
-    setOpenIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
-    );
+    setOpenIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
   };
 
   const filteredFAQs =
@@ -180,7 +178,8 @@ export default function FAQSection() {
             Frequently Asked Questions
           </h2>
           <p className="text-xs sm:text-sm text-[var(--sub)] leading-relaxed">
-            Everything you need to know about smart garage reservation, IoT telemetry, tariffs, gate clearance, and facility management.
+            Everything you need to know about smart garage reservation, IoT telemetry, tariffs, gate
+            clearance, and facility management.
           </p>
         </div>
 
@@ -211,14 +210,10 @@ export default function FAQSection() {
         {/* 2-Column FAQ Layout Matching Banner Width */}
         <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-3.5 sm:gap-4 items-start">
           {/* Left Column Stack */}
-          <div className="flex flex-col gap-3.5 sm:gap-4">
-            {leftColumnFAQs.map(renderFAQItem)}
-          </div>
+          <div className="flex flex-col gap-3.5 sm:gap-4">{leftColumnFAQs.map(renderFAQItem)}</div>
 
           {/* Right Column Stack */}
-          <div className="flex flex-col gap-3.5 sm:gap-4">
-            {rightColumnFAQs.map(renderFAQItem)}
-          </div>
+          <div className="flex flex-col gap-3.5 sm:gap-4">{rightColumnFAQs.map(renderFAQItem)}</div>
         </div>
 
         {/* Full-Width Support & Exploration Banner */}
@@ -228,7 +223,8 @@ export default function FAQSection() {
               Still have questions about smart parking reservations?
             </h3>
             <p className="text-xs text-[var(--sub)]">
-              Our 24/7 technical operations team is ready to assist drivers and garage operators anytime.
+              Our 24/7 technical operations team is ready to assist drivers and garage operators
+              anytime.
             </p>
           </div>
 

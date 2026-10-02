@@ -11,6 +11,7 @@ import GarageReviewsSection from '@/components/GarageReviewsSection';
 import { BookingService } from '@/services/booking';
 import { FavoriteService } from '@/services/favorite';
 import { GarageService } from '@/services/garage';
+import { VehicleService } from '@/services/vehicle';
 import Alert from '@/utils/alert';
 import { getAuthToken, getAuthUser } from '@/utils/cookie';
 
@@ -52,6 +53,25 @@ export default function GarageDetailsPage() {
     queryFn: () => GarageService.getSingleGarage(garageId),
     enabled: !!garageId,
   });
+
+  // Query user registered vehicles
+  const { data: vehiclesResponse } = useQuery({
+    queryKey: ['my-vehicles-for-booking', isLoggedIn],
+    queryFn: () => VehicleService.getMyVehicles(),
+    enabled: isLoggedIn,
+  });
+
+  const savedVehicles = vehiclesResponse?.data || [];
+
+  // Auto-fill default vehicle if available
+  useEffect(() => {
+    if (savedVehicles.length > 0 && !vehicleNumber) {
+      const defaultVeh = savedVehicles.find((v) => v.isDefault) || savedVehicles[0];
+      if (defaultVeh) {
+        setVehicleNumber(defaultVeh.vehicleNumber);
+      }
+    }
+  }, [savedVehicles, vehicleNumber]);
 
   // Check if current garage is favorited
   const { data: favoriteCheckData } = useQuery({
@@ -177,6 +197,15 @@ export default function GarageDetailsPage() {
       return;
     }
 
+    const cleanPlate = vehicleNumber.trim().toUpperCase();
+    if (!cleanPlate) {
+      Alert.error(
+        'Vehicle Plate Number Required',
+        'Please enter or select a vehicle license plate number to reserve your parking spot.',
+      );
+      return;
+    }
+
     const startIso = startDate.toISOString();
     const endIso = endDate.toISOString();
 
@@ -189,7 +218,7 @@ export default function GarageDetailsPage() {
         garageId: garage.id,
         startTime: startIso,
         endTime: endIso,
-        vehicleNumber: vehicleNumber.trim() || undefined,
+        vehicleNumber: cleanPlate,
       });
 
       const bookingData = response?.data;
@@ -411,7 +440,8 @@ export default function GarageDetailsPage() {
                 About this Garage
               </h2>
               <p className="text-xs sm:text-sm leading-relaxed text-[var(--sub)] whitespace-pre-line">
-                {garage.description || 'No specific description provided for this parking facility.'}
+                {garage.description ||
+                  'No specific description provided for this parking facility.'}
               </p>
             </div>
 
@@ -633,23 +663,85 @@ export default function GarageDetailsPage() {
                     </div>
                   </div>
 
-                  {/* Vehicle Number (Optional) */}
-                  <div className="space-y-1.5">
-                    <label
-                      htmlFor="vehicle-number-input"
-                      className="text-xs font-bold text-[var(--ink)] flex items-center justify-between"
-                    >
-                      <span>🚗 Vehicle Plate Number:</span>
-                      <span className="text-[10px] text-[var(--sub)] font-normal">Optional</span>
-                    </label>
+                  {/* Vehicle Number (Required & Linked to My Vehicles) */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label
+                        htmlFor="vehicle-number-input"
+                        className="text-xs font-bold text-[var(--ink)] flex items-center gap-1.5"
+                      >
+                        <span>🚗</span> Vehicle Plate Number:{' '}
+                        <span className="text-rose-500 font-bold">*</span>
+                      </label>
+                      {isLoggedIn && (
+                        <Link
+                          href="/dashboard/vehicles"
+                          target="_blank"
+                          className="text-[11px] text-blue-600 dark:text-blue-400 font-semibold hover:underline flex items-center gap-0.5"
+                          title="Open My Vehicles in Dashboard"
+                        >
+                          <span>Manage Vehicles</span>
+                          <span className="text-[10px]">↗</span>
+                        </Link>
+                      )}
+                    </div>
+
+                    {/* Saved Vehicles Quick Select Chips */}
+                    {isLoggedIn && savedVehicles.length > 0 && (
+                      <div className="space-y-1">
+                        <div className="text-[10px] text-[var(--sub)] font-medium">
+                          Select from your saved vehicles:
+                        </div>
+                        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
+                          {savedVehicles.map((v) => {
+                            const isSelected =
+                              vehicleNumber.toUpperCase() === v.vehicleNumber.toUpperCase();
+                            return (
+                              <button
+                                key={v.id}
+                                type="button"
+                                onClick={() => setVehicleNumber(v.vehicleNumber)}
+                                className={`px-2.5 py-1 rounded-md text-xs font-mono font-bold transition-all cursor-pointer shrink-0 border flex items-center gap-1 ${
+                                  isSelected
+                                    ? 'bg-[#0f2a6b] text-white border-blue-600 shadow-xs'
+                                    : 'bg-[var(--bg)] text-[var(--ink)] border-[var(--line)] hover:border-slate-400'
+                                }`}
+                                title={`${v.model || v.vehicleType} (${v.color || 'No color'})`}
+                              >
+                                <span>
+                                  {v.vehicleType === 'BIKE'
+                                    ? '🏍️'
+                                    : v.vehicleType === 'SUV'
+                                      ? '🚙'
+                                      : v.vehicleType === 'VAN'
+                                        ? '🚐'
+                                        : v.vehicleType === 'TRUCK'
+                                          ? '🚚'
+                                          : '🚗'}
+                                </span>
+                                <span>{v.vehicleNumber}</span>
+                                {v.isDefault && (
+                                  <span className="text-[9px] text-amber-300">★</span>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
                     <input
                       id="vehicle-number-input"
                       type="text"
+                      required
                       value={vehicleNumber}
                       onChange={(e) => setVehicleNumber(e.target.value.toUpperCase())}
-                      placeholder="e.g. DHAKA METRO GA-11-2233"
-                      className="w-full rounded-md border border-[var(--line)] bg-[var(--bg)] px-3 py-2 text-xs font-mono text-[var(--ink)] uppercase placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-inner"
+                      placeholder="e.g. DHAKA METRO-GA-11-2233"
+                      className="w-full rounded-md border border-[var(--line)] bg-[var(--bg)] px-3 py-2 text-xs font-mono font-bold text-[var(--ink)] uppercase placeholder:text-slate-400 placeholder:font-sans placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-inner"
                     />
+                    <p className="text-[10px] text-[var(--sub)]">
+                      License plate is verified by sensor radars during automated garage check-in.
+                    </p>
                   </div>
 
                   {/* Schedule Summary Preview */}
@@ -662,7 +754,9 @@ export default function GarageDetailsPage() {
                         </span>
                       </div>
                       <div className="text-[11px] font-medium text-[var(--ink)]">
-                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">In:</span>{' '}
+                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                          In:
+                        </span>{' '}
                         {startDate.toLocaleString('en-US', {
                           month: 'short',
                           day: 'numeric',
@@ -690,11 +784,15 @@ export default function GarageDetailsPage() {
                       <span>
                         Parking Fee ({selectedHours} hrs × ৳{garage.pricePerHour})
                       </span>
-                      <span className="font-mono font-medium text-[var(--ink)]">৳{estimatedTotal}</span>
+                      <span className="font-mono font-medium text-[var(--ink)]">
+                        ৳{estimatedTotal}
+                      </span>
                     </div>
                     <div className="flex justify-between text-[var(--sub)]">
                       <span>Payment Gateway Processing</span>
-                      <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Free</span>
+                      <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
+                        Free
+                      </span>
                     </div>
                     <div className="border-t border-[var(--line)] pt-2 mt-1 flex justify-between font-extrabold text-sm sm:text-base text-[var(--ink)]">
                       <span>Total Payable:</span>
@@ -734,7 +832,8 @@ export default function GarageDetailsPage() {
                       Facility 100% Occupied
                     </h3>
                     <p className="text-xs text-rose-700 dark:text-rose-400 leading-relaxed">
-                      All {garage.totalSlots} parking slots are currently in use. Reservations are temporarily closed until vehicles depart.
+                      All {garage.totalSlots} parking slots are currently in use. Reservations are
+                      temporarily closed until vehicles depart.
                     </p>
                   </div>
 

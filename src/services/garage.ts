@@ -124,13 +124,25 @@ export const GarageService = {
     if (params.searchTerm && params.searchTerm.trim() !== '') {
       formattedParams.searchTerm = params.searchTerm.trim();
     }
-    if (params.minPrice !== undefined && params.minPrice !== null && !isNaN(Number(params.minPrice))) {
+    if (
+      params.minPrice !== undefined &&
+      params.minPrice !== null &&
+      !isNaN(Number(params.minPrice))
+    ) {
       formattedParams.minPrice = Number(params.minPrice);
     }
-    if (params.maxPrice !== undefined && params.maxPrice !== null && !isNaN(Number(params.maxPrice))) {
+    if (
+      params.maxPrice !== undefined &&
+      params.maxPrice !== null &&
+      !isNaN(Number(params.maxPrice))
+    ) {
       formattedParams.maxPrice = Number(params.maxPrice);
     }
-    if (params.onlyAvailable !== undefined && params.onlyAvailable !== null && params.onlyAvailable !== '') {
+    if (
+      params.onlyAvailable !== undefined &&
+      params.onlyAvailable !== null &&
+      params.onlyAvailable !== ''
+    ) {
       formattedParams.onlyAvailable = params.onlyAvailable;
     }
     if (params.minRating !== undefined && params.minRating !== null) {
