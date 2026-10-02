@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { FaRegStar } from 'react-icons/fa6';
+import { FaRegHeart, FaRegStar } from 'react-icons/fa6';
 import { FiLogOut } from 'react-icons/fi';
 import { LuCalendarCheck, LuInbox, LuLayoutDashboard, LuUsers } from 'react-icons/lu';
 import { RiParkingBoxLine } from 'react-icons/ri';
@@ -121,6 +121,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <LuCalendarCheck className="w-4 h-4 shrink-0" /> My Bookings
           </Link>
 
+          {/* Favorite Garages (All Roles) */}
+          <Link
+            href="/dashboard/favorites"
+            className={pathname.startsWith('/dashboard/favorites') ? 'active' : ''}
+          >
+            <FaRegHeart className="w-4 h-4 shrink-0" /> Favorite Garages
+          </Link>
+
           {/* User Reviews (All Roles) */}
           <Link
             href="/dashboard/my-reviews"
@@ -197,6 +205,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 ? 'User Management'
                 : pathname.startsWith('/dashboard/manager-bookings')
                 ? 'Incoming Garage Bookings'
+                : pathname.startsWith('/dashboard/favorites')
+                ? 'My Favorite Garages'
                 : pathname.startsWith('/dashboard/my-reviews') ||
                   pathname.startsWith('/dashboard/reviews')
                 ? 'My Reviews & Ratings'
@@ -212,6 +222,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 ? 'Central Parking Network — Registered Users & Access Control'
                 : pathname.startsWith('/dashboard/manager-bookings')
                 ? 'Central Parking Network — Driver Parking Sessions & Slot Control'
+                : pathname.startsWith('/dashboard/favorites')
+                ? 'Central Parking Network — Saved Bookmarks & Quick Access Garages'
                 : pathname.startsWith('/dashboard/my-reviews') ||
                   pathname.startsWith('/dashboard/reviews')
                 ? 'Central Parking Network — Your Verified Reviews, Star Ratings & Garage Feedback'

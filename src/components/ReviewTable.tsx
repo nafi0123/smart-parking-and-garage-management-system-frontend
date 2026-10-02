@@ -27,9 +27,9 @@ const SORT_OPTIONS = [
 ];
 
 const LIMIT_OPTIONS = [
-  { value: 10, label: '10' },
   { value: 25, label: '25' },
   { value: 50, label: '50' },
+  { value: 100, label: '100' },
 ];
 
 interface IOption<T> {
@@ -153,7 +153,7 @@ export default function ReviewTable({
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(25);
   const [selectedReviewForEdit, setSelectedReviewForEdit] = useState<IReview | null>(null);
   const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null);
 

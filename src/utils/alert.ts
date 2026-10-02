@@ -90,6 +90,29 @@ export const Alert = {
     });
   },
 
+  // Info Alert
+  info: (title: string, text?: string) => {
+    const isDark =
+      typeof window !== 'undefined' &&
+      (document.documentElement.classList.contains('dark') ||
+        window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+    return Swal.fire({
+      title,
+      text,
+      icon: 'info',
+      confirmButtonText: 'OK',
+      confirmButtonColor: '#1e40af',
+      background: isDark ? '#121b2e' : '#ffffff',
+      color: isDark ? '#eaf0fb' : '#101828',
+      customClass: {
+        popup: 'rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl',
+        title: 'text-base font-bold',
+        confirmButton: 'rounded-xl px-5 py-2.5 font-bold text-xs',
+      },
+    });
+  },
+
   // Toast Notification
   toast: (title: string, icon: 'success' | 'error' | 'info' | 'warning' = 'success') => {
     const isDark =
@@ -112,6 +135,16 @@ export const Alert = {
       title,
     });
   },
+
+  // Quick Toast Helpers
+  toastSuccess: (title: string) => {
+    return Alert.toast(title, 'success');
+  },
+
+  toastError: (title: string) => {
+    return Alert.toast(title, 'error');
+  },
 };
 
 export default Alert;
+

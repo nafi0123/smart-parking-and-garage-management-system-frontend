@@ -1,12 +1,16 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState, useEffect, useMemo } from 'react';
+import { FaHeart, FaLocationDot, FaRegHeart, FaStar } from 'react-icons/fa6';
 import Container from '@/components/Container';
+import { FavoriteService } from '@/services/favorite';
 import { GarageService, type IGetAllGaragesParams } from '@/services/garage';
+import Alert from '@/utils/alert';
+import { getAuthToken } from '@/utils/cookie';
 
 const POPULAR_ZONES = [
   'All Zones',
@@ -36,6 +40,7 @@ const RATING_OPTIONS = [
 
 function GaragesPageContent() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const searchParams = useSearchParams();
 
   // URL search query initial values
@@ -52,9 +57,15 @@ function GaragesPageContent() {
   const [sortBy, setSortBy] = useState<string>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Mobile sidebar visibility
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+
+  // Check auth state
+  useEffect(() => {
+    setIsLoggedIn(!!getAuthToken());
+  }, []);
 
   // Sync state when URL searchParams change
   useEffect(() => {
@@ -62,6 +73,36 @@ function GaragesPageContent() {
     if (urlMaxPrice) setMaxPrice(urlMaxPrice);
     if (urlOnlyAvailable) setOnlyAvailable(true);
   }, [urlSearchTerm, urlMaxPrice, urlOnlyAvailable]);
+
+  // Query user favorites when logged in
+  const { data: favoritesResponse } = useQuery({
+    queryKey: ['my-favorites'],
+    queryFn: () => FavoriteService.getMyFavorites(),
+    enabled: isLoggedIn,
+  });
+
+  const favoritedGarageIds = useMemo(() => {
+    const set = new Set<string>();
+    if (favoritesResponse?.data) {
+      for (const fav of favoritesResponse.data) {
+        set.add(fav.id);
+      }
+    }
+    return set;
+  }, [favoritesResponse]);
+
+  // Toggle favorite mutation
+  const toggleFavoriteMutation = useMutation({
+    mutationFn: (garageId: string) => FavoriteService.toggleFavorite(garageId),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['my-favorites'] });
+      queryClient.invalidateQueries({ queryKey: ['favorite-check'] });
+      Alert.toastSuccess(data?.message || 'Favorites updated');
+    },
+    onError: (err: any) => {
+      Alert.error('Error', err?.response?.data?.message || 'Failed to update favorite');
+    },
+  });
 
   // Construct query params (24 items per page)
   const queryParams: IGetAllGaragesParams = {
@@ -463,6 +504,7 @@ function GaragesPageContent() {
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {garages.map((garage) => {
                   const isAvailable = garage.availableSlots > 0;
+                  const isFavorited = favoritedGarageIds.has(garage.id);
                   const occupancyPercent =
                     garage.totalSlots > 0
                       ? Math.round(
@@ -496,7 +538,7 @@ function GaragesPageContent() {
                         {/* Dark gradient shadow on image bottom */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
 
-                        {/* Live Availability Status Pill */}
+                        {/* Live Availability Status Pill on Top Left */}
                         <div className="absolute top-2.5 left-2.5">
                           <span
                             className={`inline-flex items-center gap-1.5 rounded px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider backdrop-blur-md shadow-xs ${
@@ -514,10 +556,47 @@ function GaragesPageContent() {
                           </span>
                         </div>
 
-                        {/* Rating Badge on Top Right */}
-                        <div className="absolute top-2.5 right-2.5 rounded bg-black/60 backdrop-blur-md px-2 py-0.5 text-[11px] font-bold text-amber-300 flex items-center gap-1 border border-white/10">
-                          <span>★</span>
-                          <span>{garage.averageRating?.toFixed(1) || '5.0'}</span>
+                        {/* Heart Bookmark Button on Top Right */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (!isLoggedIn) {
+                              Alert.info(
+                                'Sign In Required',
+                                'Please sign in to save garages to your favorites dashboard.',
+                              );
+                              return;
+                            }
+                            toggleFavoriteMutation.mutate(garage.id);
+                          }}
+                          className={`absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md transition-all duration-200 border cursor-pointer ${
+                            isFavorited
+                              ? 'bg-red-500 text-white border-red-400 shadow-md scale-105'
+                              : 'bg-black/50 text-white hover:bg-red-500/80 hover:text-white border-white/20'
+                          }`}
+                          title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+                        >
+                          {isFavorited ? (
+                            <FaHeart className="w-4 h-4 text-white animate-in zoom-in-75" />
+                          ) : (
+                            <FaRegHeart className="w-4 h-4" />
+                          )}
+                        </button>
+
+                        {/* Rating & Location on Bottom Left */}
+                        <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1.5">
+                          <div className="rounded bg-black/60 backdrop-blur-md px-2 py-0.5 text-[11px] font-bold text-amber-300 flex items-center gap-1 border border-white/10">
+                            <span>★</span>
+                            <span>{garage.averageRating?.toFixed(1) || '5.0'}</span>
+                          </div>
+
+                          {garage.location && (
+                            <span className="rounded bg-black/50 backdrop-blur-xs px-2 py-0.5 text-[10px] font-medium text-slate-200">
+                              📍 {garage.location}
+                            </span>
+                          )}
                         </div>
 
                         {/* Price Tag Overlay on Bottom Right */}
@@ -529,15 +608,6 @@ function GaragesPageContent() {
                             <span className="text-[10px] text-blue-200">/hr</span>
                           </div>
                         </div>
-
-                        {/* Location Badge on Bottom Left */}
-                        {garage.location && (
-                          <div className="absolute bottom-2.5 left-2.5">
-                            <span className="rounded bg-black/50 backdrop-blur-xs px-2 py-0.5 text-[10px] font-medium text-slate-200">
-                              📍 {garage.location}
-                            </span>
-                          </div>
-                        )}
                       </div>
 
                       {/* Card Content Body */}

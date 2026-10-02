@@ -1,13 +1,15 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { FaHeart, FaRegHeart } from 'react-icons/fa6';
 import Container from '@/components/Container';
 import GarageReviewsSection from '@/components/GarageReviewsSection';
 import { BookingService } from '@/services/booking';
+import { FavoriteService } from '@/services/favorite';
 import { GarageService } from '@/services/garage';
 import Alert from '@/utils/alert';
 import { getAuthToken, getAuthUser } from '@/utils/cookie';
@@ -23,6 +25,7 @@ const getInitialLocalDateTime = () => {
 export default function GarageDetailsPage() {
   const params = useParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const garageId = params?.id as string;
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -48,6 +51,29 @@ export default function GarageDetailsPage() {
     queryKey: ['garage', garageId],
     queryFn: () => GarageService.getSingleGarage(garageId),
     enabled: !!garageId,
+  });
+
+  // Check if current garage is favorited
+  const { data: favoriteCheckData } = useQuery({
+    queryKey: ['favorite-check', garageId],
+    queryFn: () => FavoriteService.checkIsFavorite(garageId),
+    enabled: !!garageId && isLoggedIn,
+  });
+
+  const isFavorited = favoriteCheckData?.data?.isFavorited ?? false;
+
+  // Toggle favorite mutation
+  const toggleFavoriteMutation = useMutation({
+    mutationFn: () => FavoriteService.toggleFavorite(garageId),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['favorite-check', garageId] });
+      queryClient.invalidateQueries({ queryKey: ['my-favorites'] });
+      queryClient.invalidateQueries({ queryKey: ['garages'] });
+      Alert.toastSuccess(data?.message || 'Favorite status updated');
+    },
+    onError: (err: any) => {
+      Alert.error('Error', err?.response?.data?.message || 'Failed to update favorite');
+    },
   });
 
   const garage = garageResponse?.data || null;
@@ -254,14 +280,45 @@ export default function GarageDetailsPage() {
             </p>
           </div>
 
-          {/* Top Price Callout */}
-          <div className="text-left md:text-right shrink-0">
-            <div className="text-xs font-semibold text-[var(--sub)] uppercase tracking-wider">
-              Hourly Rate
-            </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-[var(--ink)] font-mono">
-              ৳{garage.pricePerHour}
-              <span className="text-xs font-normal text-[var(--sub)]">/hr</span>
+          {/* Top Price & Bookmark Callout */}
+          <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-3 shrink-0">
+            {/* Bookmark / Favorite Button */}
+            <button
+              type="button"
+              onClick={() => {
+                if (!isLoggedIn) {
+                  Alert.info(
+                    'Sign In Required',
+                    'Please sign in to save this garage to your favorites dashboard.',
+                  );
+                  return;
+                }
+                toggleFavoriteMutation.mutate();
+              }}
+              disabled={toggleFavoriteMutation.isPending}
+              className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer border shadow-2xs active:scale-95 ${
+                isFavorited
+                  ? 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/30 hover:bg-red-500/20'
+                  : 'bg-[var(--card)] text-[var(--ink)] border-[var(--line)] hover:bg-[var(--bg)] hover:text-red-500'
+              }`}
+              title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+            >
+              {isFavorited ? (
+                <FaHeart className="w-4 h-4 text-red-500" />
+              ) : (
+                <FaRegHeart className="w-4 h-4" />
+              )}
+              <span>{isFavorited ? 'Saved in Favorites' : 'Save to Favorites'}</span>
+            </button>
+
+            <div className="text-right">
+              <div className="text-[11px] font-semibold text-[var(--sub)] uppercase tracking-wider">
+                Hourly Rate
+              </div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-[var(--ink)] font-mono leading-tight">
+                ৳{garage.pricePerHour}
+                <span className="text-xs font-normal text-[var(--sub)]">/hr</span>
+              </div>
             </div>
           </div>
         </div>
