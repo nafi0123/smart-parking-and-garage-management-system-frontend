@@ -18,27 +18,8 @@
   --foreground: var(--ink);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0b1220;
-    --card: #121b2e;
-    --ink: #eaf0fb;
-    --sub: #93a2bc;
-    --line: #22304a;
-    --background: #0b1220;
-    --foreground: #eaf0fb;
-  }
-}
+/* Dark mode disabled — app is always light mode */
 
-:root[data-theme="dark"] {
-  --bg: #0b1220;
-  --card: #121b2e;
-  --ink: #eaf0fb;
-  --sub: #93a2bc;
-  --line: #22304a;
-  --background: #0b1220;
-  --foreground: #eaf0fb;
-}
 
 @theme inline {
   --color-background: var(--background);
