@@ -59,7 +59,7 @@ export default function HowItWorksSection() {
           return (
             <div
               key={item.step}
-              className={`relative rounded-xl border border-[var(--line)] bg-[var(--card)] p-6 sm:p-7 shadow-xs hover:shadow-md transition-all duration-300 ${item.border} flex flex-col justify-between group`}
+              className={`relative rounded-md border border-[var(--line)] bg-[var(--card)] p-6 sm:p-7 shadow-xs hover:shadow-md transition-all duration-300 ${item.border} flex flex-col justify-between group`}
             >
               {/* Top Row: Step Tag & Icon */}
               <div className="flex items-center justify-between mb-5">
@@ -67,9 +67,9 @@ export default function HowItWorksSection() {
                   {item.step}
                 </span>
                 <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center border text-xl shadow-xs transition-transform group-hover:scale-110 ${item.accent}`}
+                  className={`w-11 h-11 rounded-md flex items-center justify-center border text-xl shadow-xs transition-transform group-hover:scale-110 ${item.accent}`}
                 >
-                  <Icon className="w-6 h-6" />
+                  <Icon className="w-5 h-5" />
                 </div>
               </div>
 
@@ -83,7 +83,7 @@ export default function HowItWorksSection() {
                 </p>
               </div>
 
-              {/* Bottom Subtle Step Progress Bar */}
+              {/* Bottom Step Progress Bar */}
               <div className="pt-5 mt-5 border-t border-[var(--line)] flex items-center justify-between text-[11px] font-semibold text-[var(--sub)]">
                 <span>Step {item.step} of 03</span>
                 <span className="text-blue-600 dark:text-blue-400 font-bold">Guaranteed Spot →</span>

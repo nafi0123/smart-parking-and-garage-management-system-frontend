@@ -16,11 +16,6 @@ export default function HomePage() {
         </Container>
       </div>
 
-      {/* 2. Platform Impact & Live Stats Counter */}
-      <Container>
-        <StatsCounterSection />
-      </Container>
-
       {/* 3. Recent Smart Garages (8 cards in 4-column grid) */}
       <Container>
         <RecentGaragesSection />

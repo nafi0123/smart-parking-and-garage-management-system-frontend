@@ -56,13 +56,13 @@ export default function WhyChooseUsSection() {
             <div
               // biome-ignore lint/suspicious/noArrayIndexKey: Feature list
               key={idx}
-              className="p-6 rounded-xl border border-[var(--line)] bg-[var(--card)] shadow-xs hover:shadow-md hover:border-blue-500/40 transition-all duration-300 flex flex-col justify-between group"
+              className="p-6 rounded-md border border-[var(--line)] bg-[var(--card)] shadow-xs hover:shadow-md hover:border-blue-500/40 transition-all duration-300 flex flex-col justify-between group"
             >
               <div className="space-y-4">
                 <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center border text-xl shadow-xs transition-transform group-hover:scale-110 ${feature.color}`}
+                  className={`w-11 h-11 rounded-md flex items-center justify-center border text-xl shadow-xs transition-transform group-hover:scale-110 ${feature.color}`}
                 >
-                  <Icon className="w-6 h-6" />
+                  <Icon className="w-5 h-5" />
                 </div>
 
                 <div className="space-y-1.5">
