@@ -81,14 +81,37 @@ export default function LoginPage() {
       return;
     }
 
-    // Handle Google redirect mode: credential comes back as query param
     const params = new URLSearchParams(window.location.search);
+
+    // Case 1: Backend google-redirect sends accessToken + user directly
+    const accessToken = params.get('accessToken');
+    const userParam = params.get('user');
+    if (accessToken) {
+      window.history.replaceState({}, '', '/login');
+      try {
+        const user = userParam ? JSON.parse(decodeURIComponent(userParam)) : null;
+        setAuthSession(accessToken, user);
+        setSuccess('Google login successful! Redirecting...');
+        setTimeout(() => { window.location.href = '/dashboard'; }, 400);
+      } catch {
+        setError('Google login failed. Please try again.');
+      }
+      return;
+    }
+
+    // Case 2: google-callback route sends credential param
     const googleCredential = params.get('credential');
     if (googleCredential) {
-      // Clean the URL
       window.history.replaceState({}, '', '/login');
-      // Auto-login with the credential
       handleGoogleLogin(googleCredential);
+      return;
+    }
+
+    // Case 3: Error from backend redirect
+    const errorParam = params.get('error');
+    if (errorParam) {
+      window.history.replaceState({}, '', '/login');
+      setError(decodeURIComponent(errorParam));
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

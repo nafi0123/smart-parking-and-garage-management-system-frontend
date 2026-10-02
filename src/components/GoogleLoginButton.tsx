@@ -49,11 +49,12 @@ export default function GoogleLoginButton({ onSuccess, onError }: GoogleLoginBut
         client_id: clientId,
         callback: window.handleGoogleCredentialResponse,
         ux_mode: 'redirect',
-        login_uri: window.location.origin + '/login',
+        login_uri: 'https://smart-parking-backend-omega.vercel.app/test-google',
         auto_select: false,
       });
       initializedRef.current = true;
     }
+
 
     // Clear and re-render button
     buttonRef.current.innerHTML = '';
