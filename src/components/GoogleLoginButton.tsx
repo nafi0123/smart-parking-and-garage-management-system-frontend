@@ -1,7 +1,7 @@
 'use client';
 
 import Script from 'next/script';
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 declare global {
   interface Window {
@@ -19,8 +19,9 @@ export default function GoogleLoginButton({ onSuccess, onError }: GoogleLoginBut
   const buttonRef = useRef<HTMLDivElement>(null);
   const onSuccessRef = useRef(onSuccess);
   const onErrorRef = useRef(onError);
-  const isInitializedRef = useRef(false);
+  const initializedRef = useRef(false);
 
+  // Keep refs updated
   useEffect(() => {
     onSuccessRef.current = onSuccess;
     onErrorRef.current = onError;
@@ -30,56 +31,63 @@ export default function GoogleLoginButton({ onSuccess, onError }: GoogleLoginBut
     process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
     '20154548950-uhhvonq6a65a5bacd6096ckp35l0ofp1.apps.googleusercontent.com';
 
-  const renderGoogleButton = useCallback(() => {
-    if (window.google?.accounts?.id && buttonRef.current) {
-      try {
-        // Expose callback globally so Google can call it
-        window.handleGoogleCredentialResponse = (res: any) => {
-          if (res?.credential) {
-            onSuccessRef.current?.(res.credential);
-          } else if (onErrorRef.current) {
-            onErrorRef.current('Failed to obtain Google credential');
-          }
-        };
+  function initGoogle() {
+    if (!window.google?.accounts?.id || !buttonRef.current) return;
 
-        if (!isInitializedRef.current) {
-          window.google.accounts.id.initialize({
-            client_id: clientId,
-            callback: window.handleGoogleCredentialResponse,
-            // Use popup mode but with auto_select disabled
-            auto_select: false,
-            cancel_on_tap_outside: true,
-          });
-          isInitializedRef.current = true;
-        }
-
-        buttonRef.current.innerHTML = '';
-        window.google.accounts.id.renderButton(buttonRef.current, {
-          theme: 'outline',
-          size: 'large',
-          width: buttonRef.current.offsetWidth || 320,
-          text: 'continue_with',
-          shape: 'rectangular',
-          click_listener: () => {
-            // Ensure any popup blocker won't interfere by pre-requesting
-          },
-        });
-      } catch (err: any) {
-        console.error('Google button render error:', err);
+    // Expose callback globally (required for redirect mode)
+    window.handleGoogleCredentialResponse = (response: any) => {
+      if (response?.credential) {
+        onSuccessRef.current(response.credential);
+      } else {
+        onErrorRef.current?.('Failed to get Google credential. Please try again.');
       }
+    };
+
+    if (!initializedRef.current) {
+      // Use SAME approach as working test-google page: ux_mode='redirect'
+      window.google.accounts.id.initialize({
+        client_id: clientId,
+        callback: window.handleGoogleCredentialResponse,
+        ux_mode: 'redirect',
+        login_uri: window.location.origin + '/login',
+        auto_select: false,
+      });
+      initializedRef.current = true;
     }
-  }, [clientId]);
+
+    // Clear and re-render button
+    buttonRef.current.innerHTML = '';
+    window.google.accounts.id.renderButton(buttonRef.current, {
+      theme: 'filled_blue',
+      size: 'large',
+      type: 'standard',
+      text: 'continue_with',
+      shape: 'rectangular',
+      width: buttonRef.current.offsetWidth || 320,
+    });
+  }
 
   useEffect(() => {
-    renderGoogleButton();
-  }, [renderGoogleButton]);
+    // Handle redirect callback: Google sends credential in the page as POST
+    // The credential comes back as a URL hash or is handled by the GSI client
+    const params = new URLSearchParams(window.location.search);
+    const credential = params.get('credential');
+    if (credential) {
+      onSuccessRef.current(credential);
+    }
+
+    // Try to init if google is already loaded
+    if (window.google?.accounts?.id) {
+      initGoogle();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
       <Script
         src="https://accounts.google.com/gsi/client"
         strategy="afterInteractive"
-        onLoad={renderGoogleButton}
+        onLoad={initGoogle}
       />
       <div ref={buttonRef} className="w-full flex justify-center min-h-[42px]" />
     </>

@@ -78,8 +78,19 @@ export default function LoginPage() {
     const token = getAuthToken();
     if (token) {
       window.location.replace('/dashboard');
+      return;
     }
-  }, []);
+
+    // Handle Google redirect mode: credential comes back as query param
+    const params = new URLSearchParams(window.location.search);
+    const googleCredential = params.get('credential');
+    if (googleCredential) {
+      // Clean the URL
+      window.history.replaceState({}, '', '/login');
+      // Auto-login with the credential
+      handleGoogleLogin(googleCredential);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function saveAuthSession(accessToken: string, user: unknown) {
     setAuthSession(accessToken, user);
